@@ -1,0 +1,308 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart';
+import 'package:universal_assistant/core/enums/priority.dart';
+import 'package:universal_assistant/domain/utils/date_time_utils.dart';
+import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task_cubit.dart';
+import 'package:universal_assistant/presentation/widgets/calendar_sheet.dart';
+import 'package:universal_assistant/presentation/widgets/notification_dialog.dart';
+import 'package:universal_assistant/presentation/widgets/priority_sheet.dart';
+import 'package:universal_assistant/presentation/widgets/tag_sheet.dart';
+import 'package:universal_assistant/presentation/widgets/task_sheet_button.dart';
+import 'package:universal_assistant/presentation/widgets/time_picker_for_task_sheet.dart';
+
+import '../../domain/entities/tag.dart';
+import '../calendar/cubit/calendar/calendar_cubit.dart';
+
+class NewTaskSheet extends StatelessWidget {
+  NewTaskSheet(
+      {super.key, required this.nameController, required this.infoController});
+  DateTime? date;
+  List<int>? time;
+  Priority? priority;
+  Tag? tag;
+
+  final TextEditingController nameController;
+  final TextEditingController infoController;
+
+  @override
+  Widget build(BuildContext context) {
+    context.read<NewTaskCubit>().fetchNewTask();
+    final selected = context.select((NewTaskCubit cubit) => cubit.state.date);
+    final currentDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    const iconSize = 17.0;
+    final priorityCubit =
+        context.select((NewTaskCubit cubit) => cubit.state.task.priority);
+    final width = MediaQuery.of(context).size.width / 23;
+    return Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextField(
+                  controller: nameController,
+                  cursorColor: Colors.black,
+                  decoration: const InputDecoration(
+                    hintText: 'Название',
+                    hintStyle: TextStyle(
+                        //color: Colors.grey,
+                        ),
+                    focusColor: Colors.grey,
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextField(
+                  controller: infoController,
+                  cursorColor: Colors.black,
+                  decoration: const InputDecoration(
+                    hintText: 'Описание',
+                    hintStyle: TextStyle(
+                      fontSize: 10,
+                      //color: Colors.grey[400],
+                    ),
+                    focusColor: Colors.grey,
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                  ),
+                  // onEditingComplete: (){
+                  //   print('object');
+                  //   FocusScope.of(context).unfocus();
+                  // },
+                  // onTapOutside: (event){
+                  //   print('outside');
+                  //   FocusScope.of(context).unfocus();
+                  // },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TaskSheetButton(
+                      icon: SvgPicture.asset(
+                        'assets/icons/calendar.svg',
+                        height: iconSize,
+                      ),
+                      onPressed: () async {
+                        date = await showModalBottomSheet<DateTime>(
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            ),
+                          ),
+                          backgroundColor: Colors.white,
+                          context: context,
+                          builder: (BuildContext context) => CalendarSheet(
+                            selectedDate: date ?? selected,
+                            isTask: true,
+                          ),
+                        );
+                        date ??= selected;
+                        print(date);
+                      },
+                      label: DateTimeUtils.isSameDay(selected, DateTime.now())
+                          ? 'Сегодня'
+                          : DateFormat.yMMMMd().format(selected),
+                    ),
+                    // DecoratedBox(
+                    //   decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //       //border: Border.all(color: Colors.black),
+                    //       color: Colors.grey),
+                    //   child: Row(
+                    //     children: [
+                    //       ,
+                    //       // const SizedBox(
+                    //       //   width: 10,
+                    //       // )
+                    //     ],
+                    //   ),
+                    // ),
+                    // DecoratedBox(
+                    //     decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         border: Border.all(color: Colors.black)),
+                    //     child: IconButton(
+                    //         icon: const Icon(
+                    //           Icons.access_time,
+                    //           size: buttonSize,
+                    //         ),
+                    //         onPressed: () async {
+                    //           time = await showModalBottomSheet<List<int>>(
+                    //             shape: const RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.vertical(
+                    //                 top: Radius.circular(12),
+                    //               ),
+                    //             ),
+                    //             backgroundColor: Colors.white,
+                    //             context: context,
+                    //             builder: (BuildContext context) =>
+                    //                 TimePickerSheet(
+                    //               hour: time?[0],
+                    //               minute: time?[1],
+                    //             ),
+                    //           );
+                    //           print(time);
+                    //         })),
+                    // DecoratedBox(
+                    //     decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         border: Border.all(color: Colors.black)),
+                    //     child: IconButton(
+                    //         icon: SvgPicture.asset(
+                    //           'assets/icons/notification.svg',
+                    //           height: buttonSize,
+                    //         ),
+                    //         onPressed: () {
+                    //           // showModalBottomSheet<List<int>>(
+                    //           //   shape: const RoundedRectangleBorder(
+                    //           //     borderRadius: BorderRadius.vertical(
+                    //           //       top: Radius.circular(12),
+                    //           //     ),
+                    //           //   ),
+                    //           //   backgroundColor: Colors.white,
+                    //           //   context: context,
+                    //           //   builder: (BuildContext context) =>
+                    //           //       NotificationSheet(),
+                    //           // );
+                    //         })),
+                    // DecoratedBox(
+                    //     decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         border: Border.all(color: Colors.black)),
+                    //     child: IconButton(
+                    //),
+                    TaskSheetButton(
+                      icon: Image.asset(
+                        'assets/icons/hashtag2.png',
+                        height: width,
+                      ),
+                      onPressed: () async {
+                        tag = await showModalBottomSheet<Tag>(
+                          isScrollControlled: true,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(12),
+                            ),
+                          ),
+                          backgroundColor: Colors.white,
+                          context: context,
+                          builder: (BuildContext context) => TagSheet(selectedTag: tag,),
+                        );
+
+                      },
+                      label: tag == null ? 'Тег' : tag!.name,
+                    ),
+                    TaskSheetButton(
+                      icon: Image.asset(
+                        'assets/icons/flag2.png',
+                        height: width,
+                      ),
+                      onPressed: () async {
+                        priority = await showModalBottomSheet<Priority>(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                          backgroundColor: Colors.white,
+                          context: context,
+                          builder: (BuildContext context) => PrioritySheet(),
+                        );
+                        //checkBoxStatuses[index!] = true;
+                      },
+                      label: priority == null
+                          ? 'Приоритет'
+                          : getPriorityText(priority!),
+                    ),
+                    // DecoratedBox(
+                    //     decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(10),
+                    //         border: Border.all(color: Colors.black)),
+                    //     child: IconButton(
+                    //         icon: SvgPicture.asset(
+                    //           'assets/icons/rotate-reverse.svg',
+                    //           height: buttonSize,
+                    //         ),
+                    //         onPressed: () {})),
+                  ],
+                ),
+              ),
+              const Divider(
+                color: Colors.grey,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          context.read<NewTaskCubit>()
+                            ..changeName(nameController.text)
+                            ..changeInfo(infoController.text)
+                            ..changeReminderMessage();
+                          // if(tag != null){
+                          //   context.read<NewTaskCubit>().changeTag(tag!);
+                          // }
+                          final futureResult =
+                              context.read<NewTaskCubit>().saveNewTask();
+                          futureResult.then((result) {
+                            if (!context.mounted) {
+                              return;
+                            } else {
+                              if (result[0] as bool) {
+                                nameController.clear();
+                                infoController.clear();
+                                Navigator.pop(context);
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Ошибка'),
+                                    content: const Text(
+                                        'Невозможно сохранить задачу!\nПроверьте заполненные данные.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('ОК'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
+                          });
+                        },
+                        icon: Image.asset(
+                          'assets/icons/submit.png',
+                          height: 45,
+                        )),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

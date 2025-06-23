@@ -19,14 +19,11 @@ class DottedCircleIcon extends StatelessWidget {
       padding: const EdgeInsets.all(9),
       child: DottedBorder(
         borderType: BorderType.Circle,
-        dashPattern: [2, 2], // Длина штриха и пробела
+        dashPattern: [2, 2],
         strokeWidth: 1,
         radius: Radius.circular(0.7),
         color: color,
         child: Container(
-          //   width: size,
-          // height: size,
-          // decoration: const BoxDecoration(shape: BoxShape.circle),
           ),
       ),
     );

@@ -24,20 +24,6 @@ abstract class DateTimeUtils {
   }
 
   static List<DateTime> daysInWeek(DateTime day, DateTime month) {
-    // final firstDay = firstDayOfWeek(day);
-    // final lastDay = lastDayOfWeek(day);
-    // final first = firstDayOfMonth(day);
-    // final daysBefore = first.weekday;
-    // final firstToDisplay = first.subtract(Duration(days: daysBefore - 1));
-    // final last = lastDayOfMonth(day);
-    //
-    // final daysAfter = DateTime.daysPerWeek - last.weekday;
-    //
-    // // if (daysAfter == 0) {
-    // //   daysAfter = DateTime.daysPerWeek;
-    // // }
-    //
-    // final lastToDisplay = last.add(Duration(days: daysAfter + 1));
 
     return daysInRange(firstDayOfWeek(day), lastDayOfWeek(day).add(const Duration(days: 1))).toList();
   }
@@ -74,9 +60,6 @@ abstract class DateTimeUtils {
 
     final daysAfter = DateTime.daysPerWeek - last.weekday;
 
-    // if (daysAfter == 0) {
-    //   daysAfter = DateTime.daysPerWeek;
-    // }
 
     final lastToDisplay = last.add(Duration(days: daysAfter + 1));
 

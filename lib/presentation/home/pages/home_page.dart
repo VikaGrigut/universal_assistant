@@ -24,16 +24,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // TaskRepositoryImpl taskRep = TaskRepositoryImpl();
-  // EventRepositoryImpl eventRep = EventRepositoryImpl();
-  // SettingsRepositoryImpl settingsRep = SettingsRepositoryImpl();
-  //final LocaleDBProvider dbProvider = LocaleDBProvider.dbProvider;
-  // final List<Widget> pages = [
-  //   CalendarPage(),
-  //   TagsPage(),
-  //   MatrixPage(),
-  //   MenuPage()//PomodoroPage(),
-  // ];
 
   int currentPage = 0;
 
@@ -50,32 +40,18 @@ class _HomePageState extends State<HomePage> {
     'assets/icons/menu_selected.png',
   ];
 
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     currentPage = index;
-  //   });
-  // }
-
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController infoController = TextEditingController();
 
-  //bool _isFirstLaunch = true;
 
   @override
   void initState() {
     super.initState();
-    //print('home');
     context.read<HomeCubit>().fetchHome();
   }
 
   @override
   Widget build(BuildContext context) {
-    // if(_isFirstLaunch){
-    //   print('home');
-    //   context.read<HomeCubit>().fetchHome();
-    //   _isFirstLaunch = false;
-    // }
     final selectedTab = context.select((HomeCubit cubit) => cubit.state.tab);
     return SafeArea(
       child: Scaffold(
@@ -113,6 +89,7 @@ class _HomePageState extends State<HomePage> {
                                 return NewTaskSheet(
                                   nameController: nameController,
                                   infoController: infoController,
+                                  isNew: true,
                                 );
                               },
                             );
@@ -171,8 +148,6 @@ class _HomePageState extends State<HomePage> {
             topRight: Radius.circular(30),
           ),
           child: BottomAppBar(
-            //shape: CircularNotchedRectangle(),
-            //notchMargin: 0,
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,45 +160,16 @@ class _HomePageState extends State<HomePage> {
                             ? selectedIconsPaths[index]
                             : iconsPaths[index],
                         height: 30,
-                        // color: currentPage == index
-                        //     ? Colors.black
-                        //     : Colors.grey.shade600,
                       ),
                       onPressed: () => setState(() {
                         context.read<HomeCubit>().setTab(HomeTab.values[index]);
                       }) ,//_onItemTapped(index),
                     ),
                   );
-                // if (index == 2) {
-                //    // space for FAB
-                // }
-                // return IconButton(
-                //   icon: Icon(
-                //     icons[index],
-                //     color: currentPage == index
-                //         ? Colors.black
-                //         : Colors.grey.shade600,
-                //   ),
-                //   onPressed: () => _onItemTapped(index),
-                // );
               }),
             ),
           ),
         ),
-        // BottomNavigationBar(
-        //   type: BottomNavigationBarType.fixed,
-        //   currentIndex: currentPage,
-        //   onTap: (index) => setState(() {
-        //     currentPage = index;
-        //   }),
-        //   items: const [
-        //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Calendar'),
-        //     BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Matrix'),
-        //     BottomNavigationBarItem(icon: Icon(Icons.add,size: 35,), label: ''),
-        //     BottomNavigationBarItem(icon: Icon(Icons.monitor_heart), label: 'Tags'),
-        //     BottomNavigationBarItem(icon: Icon(Icons.data_thresholding_sharp), label: 'Statistic'),
-        //   ],
-        // ),
       ),
     );
   }

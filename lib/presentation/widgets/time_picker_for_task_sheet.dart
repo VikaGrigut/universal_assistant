@@ -25,10 +25,6 @@ class _TimePickerForTaskSheetState extends State<TimePickerForTaskSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // int selectedHour = widget.hour ?? 9;
-    // int selectedMinute = widget.minute ?? 0;
-    // final buttonWidth = MediaQuery.of(context).size.width / 2;
-    //widget.duration ??= const Duration(hours: 9);
     hour = widget.duration.inHours;
     minute = widget.duration.inMinutes % 60;
     return AlertDialog(
@@ -42,49 +38,6 @@ class _TimePickerForTaskSheetState extends State<TimePickerForTaskSheet> {
           const SizedBox(
             height: 10,
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     SizedBox(
-          //       height: 140,
-          //       width: 60,
-          //       child: CupertinoPicker(
-          //         itemExtent: 32,
-          //         scrollController: FixedExtentScrollController(
-          //             initialItem: selectedHour),
-          //         onSelectedItemChanged: (value) => selectedHour = value,
-          //         children: List.generate(24, (index) {
-          //           return Center(
-          //             child: Text(
-          //               index.toString().padLeft(2, '0'),
-          //               style: const TextStyle(
-          //                   fontSize: 20, fontWeight: FontWeight.w400),
-          //             ),
-          //           );
-          //         }),
-          //       ),
-          //     ),
-          //     SizedBox(
-          //       height: 140,
-          //       width: 60,
-          //       child: CupertinoPicker(
-          //         itemExtent: 32,
-          //         scrollController: FixedExtentScrollController(
-          //             initialItem: selectedMinute),
-          //         onSelectedItemChanged: (value) => selectedMinute = value,
-          //         children: List.generate(60, (index) {
-          //           return Center(
-          //             child: Text(
-          //               index.toString().padLeft(2, '0'),
-          //               style: const TextStyle(
-          //                   fontSize: 20, fontWeight: FontWeight.w400),
-          //             ),
-          //           );
-          //         }),
-          //       ),
-          //     ),
-          //   ],
-          // ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -127,20 +80,6 @@ class _TimePickerForTaskSheetState extends State<TimePickerForTaskSheet> {
               ),
             ],
           ),
-          // SizedBox(
-          //   width: MediaQuery.of(context).size.width * 0.8,
-          //   height: 250,
-          //   child: CupertinoTimerPicker(
-          //     alignment: Alignment.center,
-          //     initialTimerDuration: widget.duration!,
-          //     mode: CupertinoTimerPickerMode.hm,
-          //     onTimerDurationChanged: (newDuration) {
-          //       setState(() {
-          //         widget.duration = newDuration;
-          //       });
-          //     },
-          //   ),
-          // ),
           const SizedBox(
             height: 10,
           ),
@@ -151,9 +90,8 @@ class _TimePickerForTaskSheetState extends State<TimePickerForTaskSheet> {
               widget.isNew ? (context.read<NewTaskCubit>()
                 ..changeTime(hour!, minute!)
                 ..fetchNewTask()):(context.read<EditTaskCubit>()
-                ..changeTime(hour!, minute!)
-                ..fetchEditTask());
-              // Navigator.pop(context, [selectedHour, selectedMinute]);
+                ..changeTime(hour!, minute!)..fetchEditTask()
+                );
               Navigator.pop(context, );//duration
             },
           ),

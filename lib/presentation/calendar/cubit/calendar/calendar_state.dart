@@ -17,9 +17,6 @@ class CalendarState extends Equatable {
   final List<Event> events;
   final DateTime selectedDay;
 
-  // bool get canSubmit =>
-  //     status != WeekendsStatus.loading &&
-  //     !initialDates.equalIgnorePosition(selectedDates);
 
   CalendarState copyWith({
     CalendarStatus? status,

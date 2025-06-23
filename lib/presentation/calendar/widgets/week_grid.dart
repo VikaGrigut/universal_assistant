@@ -23,8 +23,6 @@ class WeekGrid extends StatelessWidget {
       primary: false,
       shrinkWrap: true,
       crossAxisCount: DateUtils.weekdays.length,
-      //mainAxisSpacing: 1,
-      //crossAxisSpacing: 1,
       childAspectRatio: 1,
       children: _buildCells(context, month, selectedDay, CupertinoColors.white),
     );
@@ -33,10 +31,6 @@ class WeekGrid extends StatelessWidget {
           details.velocity.pixelsPerSecond.dx > 0
               ? _previousWeek()
               : _nextWeek(),
-      // Container(
-      // decoration: const BoxDecoration(
-      //color: CupertinoColors.quaternarySystemFill.withOpacity(0.08),
-      //borderRadius: BorderRadius.all(Radius.circular(6)),
 
       child: cells,
     );
@@ -61,6 +55,7 @@ class WeekGrid extends StatelessWidget {
               selectedDay: selectedDay,
               color: color,
               isNewTask: false,
+              isNew: false,
               isRepetition: false,
               isNewEvent: false,
             ))

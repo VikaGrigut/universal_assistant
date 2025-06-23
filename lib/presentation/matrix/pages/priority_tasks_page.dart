@@ -72,24 +72,19 @@ class PriorityTasksPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // const Wrap(
-                    //   children: [
-                    //     Text('добавить процент выполненности',)
-                    //   ],
-                    // ),
                   ],
                 ),
               ),
               const Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Divider(),
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Divider(),
               ),
               const SizedBox(
                 height: 5,
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: ListView.builder(
                     itemCount: dates.length,
                     itemBuilder: (context, index) {

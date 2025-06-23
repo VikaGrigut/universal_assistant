@@ -11,8 +11,4 @@ abstract class EventRepository{
   Future<bool> updateEvent(Event event);
 
   Future<bool> deleteEvent(int eventId);
-
-//  Future<bool> changeReminder(int eventId, int reminderId, Reminder reminder);
-
-//  Future<bool> deleteReminder(int eventId, int reminderId);
 }

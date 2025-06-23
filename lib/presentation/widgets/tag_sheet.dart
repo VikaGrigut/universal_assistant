@@ -17,7 +17,6 @@ class TagSheet extends StatefulWidget {
   List<Tag> selectedTags;
   final bool isTask;
   final bool isNew;
-  //String? selectedTag;
 
   @override
   State<TagSheet> createState() => _TagSheetState();
@@ -27,7 +26,6 @@ class _TagSheetState extends State<TagSheet> {
   @override
   Widget build(BuildContext context) {
     final tags2 = context.select((TagsCubit cubit) => cubit.tags);
-    final tags = ['meow', 'wof', 'mow', 'car', 'pe'];
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.5,

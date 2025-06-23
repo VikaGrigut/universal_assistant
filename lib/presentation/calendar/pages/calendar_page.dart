@@ -76,8 +76,6 @@ class CalendarView extends StatelessWidget {
   CalendarView({super.key, required this.month});
 
   DateTime month;
-  // final TextEditingController nameController = TextEditingController();
-  // final TextEditingController infoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +102,6 @@ class CalendarView extends StatelessWidget {
                 children: [
                   Text(
                     _formatMonth(month,locale),
-                    //DateFormat('yMMMM', locale).format(month).toString(),///localization?
                     style: const TextStyle(fontSize: 19),
                   ),
                 ],
@@ -116,7 +113,6 @@ class CalendarView extends StatelessWidget {
                         color: Colors.white,
                         onSwipe: (month) =>
                             context.read<CalendarCubit>()..changeMonth(month)
-                        //..fetchCalendar(),
                         ),
                     const SizedBox(
                       height: 10,

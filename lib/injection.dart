@@ -8,6 +8,7 @@ import 'package:universal_assistant/domain/repositories/settings_repository.dart
 import 'package:universal_assistant/domain/repositories/tag_repository.dart';
 import 'package:universal_assistant/domain/repositories/task_repository.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/calendar/calendar_cubit.dart';
+import 'package:universal_assistant/presentation/calendar/cubit/editTask/edit_task_cubit.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newEvent/new_event_cubit.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task_cubit.dart';
 import 'package:universal_assistant/presentation/home/cubit/home_cubit.dart';
@@ -45,6 +46,12 @@ Future<void> init() async {
       ));
 
   locator.registerLazySingleton(() => NewTaskCubit(
+        homeCubit: locator(),
+        taskRepository: locator(),
+        tagRepository: locator(),
+      ));
+
+  locator.registerLazySingleton(() => EditTaskCubit(
         homeCubit: locator(),
         taskRepository: locator(),
         tagRepository: locator(),

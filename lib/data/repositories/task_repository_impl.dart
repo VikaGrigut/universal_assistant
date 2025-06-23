@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:sqflite/sqflite.dart';
 import 'package:universal_assistant/data/datasources/locale_db.dart';
 import 'package:universal_assistant/data/models/reminder_model.dart';
 import 'package:universal_assistant/data/models/task_model.dart';
@@ -36,8 +35,6 @@ class TaskRepositoryImpl implements TaskRepository {
     final db = await dbProvider.db;
     TaskModel taskModel = TaskModel.fromEntity(changedTask);
     final taskJson = taskModel.toJson();
-    // ReminderModel reminderModel = ReminderModel.fromEntity(reminder);
-    // final reminderJson = reminderModel.toJson();
     try {
       await db.update(
         'Tasks',
@@ -70,7 +67,6 @@ class TaskRepositoryImpl implements TaskRepository {
       List<Map<String, Object?>> resultTags = await db.query('Tags');
       List<TagModel> modelsTags = List<TagModel>.from(
           resultTags.map((element) => TagModel.fromJson(element)));
-      //listTags = modelsTags.map((element) => element.toEntity()).toList();
       List<TaskModel> listModels = List<TaskModel>.from(
           result.map((element) => TaskModel.fromJson(element,modelsTags)));
       listTasks = listModels.map((element) => element.toEntity()).toList();

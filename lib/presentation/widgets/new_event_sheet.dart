@@ -31,8 +31,6 @@ class NewEventSheet extends StatelessWidget {
     final currentDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     const iconSize = 17.0;
-    // final priorityCubit =
-    //     context.select((NewEventCubit cubit) => cubit.state.event.);
     final width = MediaQuery.of(context).size.width / 23;
     return Padding(
       padding:
@@ -128,38 +126,6 @@ class NewEventSheet extends StatelessWidget {
                       },
                       label: tags == null ? t.Tag : tags!.map((item) => item.name).toString(),
                     ),
-                    // TaskSheetButton(
-                    //   icon: Image.asset(
-                    //     'assets/icons/flag2.png',
-                    //     height: width,
-                    //   ),
-                    //   onPressed: () async {
-                    //     priority = await showModalBottomSheet<Priority>(
-                    //       shape: const RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.all(
-                    //           Radius.circular(12),
-                    //         ),
-                    //       ),
-                    //       backgroundColor: Colors.white,
-                    //       context: context,
-                    //       builder: (BuildContext context) => PrioritySheet(),
-                    //     );
-                    //     //checkBoxStatuses[index!] = true;
-                    //   },
-                    //   label: priority == null
-                    //       ? 'Приоритет'
-                    //       : getPriorityText(priority!),
-                    // ),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //         icon: SvgPicture.asset(
-                    //           'assets/icons/rotate-reverse.svg',
-                    //           height: buttonSize,
-                    //         ),
-                    //         onPressed: () {})),
                   ],
                 ),
               ),
@@ -177,9 +143,6 @@ class NewEventSheet extends StatelessWidget {
                             ..changeName(nameController.text)
                             ..changeInfo(infoController.text)
                             ..changeRemindersMessage();
-                          // if(tag != null){
-                          //   context.read<NewEventCubit>().changeTag(tag!);
-                          // }
                           final futureResult = context.read<NewEventCubit>().saveNewEvent();
                           futureResult.then((result) {
                             if (!context.mounted) {
@@ -208,9 +171,6 @@ class NewEventSheet extends StatelessWidget {
                               }
                             }
                           });
-                          // nameController.clear();
-                          // infoController.clear();
-                          // Navigator.pop(context);
                         },
                         icon: Image.asset(
                           'assets/icons/submit.png',

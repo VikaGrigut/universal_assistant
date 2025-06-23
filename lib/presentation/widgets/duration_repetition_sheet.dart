@@ -45,9 +45,6 @@ class DurationRepetitionSheet extends StatelessWidget {
               ),
               textAlign: TextAlign.start,
             ),
-            // const SizedBox(
-            //   height: 5,
-            // ),
             CalendarBasis(
               collapsed: Column(
                 children: [
@@ -61,11 +58,7 @@ class DurationRepetitionSheet extends StatelessWidget {
                             ..changeMonthForDuration(month))
                           : (month) => context.read<NewEventCubit>()
                             ..changeMonthForDuration(month)
-                      //..fetchNewTask(),
                       ),
-                  // const SizedBox(
-                  //   height: 4,
-                  // ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
@@ -89,8 +82,8 @@ class DurationRepetitionSheet extends StatelessWidget {
                   ? (isNew ? (month) => context.read<NewTaskCubit>()
                     ..changeMonthForDuration(month)
                     ..fetchNewTask():(month) => context.read<EditTaskCubit>()
-                    ..changeMonthForDuration(month)
-                    ..fetchEditTask())
+                    ..changeMonthForDuration(month)..fetchEditTask()
+                    )
                   : (month) => context.read<NewEventCubit>()
                     ..changeMonthForDuration(month)
                     ..fetchNewEvent(),

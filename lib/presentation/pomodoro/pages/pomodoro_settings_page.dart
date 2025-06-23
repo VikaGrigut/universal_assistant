@@ -69,9 +69,6 @@ class _PomodoroSettingsPageState extends State<PomodoroSettingsPage> {
                         ],
                         cursorColor: Colors.black,
                         decoration: const InputDecoration(
-                          // hintStyle: const TextStyle(
-                          //     //color: Colors.grey,
-                          //     ),
                           contentPadding: EdgeInsets.symmetric(vertical: 8),
                           focusColor: Colors.grey,
                           hoverColor: Colors.grey,
@@ -107,9 +104,6 @@ class _PomodoroSettingsPageState extends State<PomodoroSettingsPage> {
                         ],
                         cursorColor: Colors.black,
                         decoration: const InputDecoration(
-                          // hintStyle: const TextStyle(
-                          //     //color: Colors.grey,
-                          //     ),
                           contentPadding: EdgeInsets.symmetric(vertical: 8),
                           focusColor: Colors.grey,
                           hoverColor: Colors.grey,
@@ -158,9 +152,6 @@ class _PomodoroSettingsPageState extends State<PomodoroSettingsPage> {
                             borderSide:
                                 BorderSide(color: Colors.grey, width: 2),
                           ),
-                          // border: InputBorder.none,
-                          // focusedBorder: InputBorder.none,
-                          // enabledBorder: InputBorder.none,
                         ),
                       ),
                     ),
@@ -186,9 +177,6 @@ class _PomodoroSettingsPageState extends State<PomodoroSettingsPage> {
                         ],
                         cursorColor: Colors.black,
                         decoration: const InputDecoration(
-                          // hintStyle: const TextStyle(
-                          //     //color: Colors.grey,
-                          //     ),
                           contentPadding: EdgeInsets.symmetric(vertical: 8),
                           focusColor: Colors.grey,
                           hoverColor: Colors.grey,

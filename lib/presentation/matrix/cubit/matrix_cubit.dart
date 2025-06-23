@@ -50,7 +50,7 @@ class MatrixCubit extends Cubit<MatrixState> {
     }
   }
 
-  List<Task> sortTasks(Priority priority) {//List<Task> tasks,
+  List<Task> sortTasks(Priority priority) {
     print('sort ${priority.toString()}');
     return state.tasks == null ? [] : state.tasks!.where((task) => task.priority == priority).toList();
 

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:universal_assistant/domain/entities/task.dart';
 import 'package:universal_assistant/main.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/calendar/calendar_cubit.dart';
+import 'package:universal_assistant/presentation/calendar/cubit/editTask/edit_task_cubit.dart';
 import 'package:universal_assistant/presentation/calendar/pages/calendar_page.dart';
 import 'package:universal_assistant/presentation/matrix/cubit/matrix_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/custom_check_box.dart';
@@ -33,33 +34,6 @@ class _TaskItemState extends State<TaskItem> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       child: Row(
         children: [
-          // Checkbox(
-          //     value: isCompleted,
-          //     checkColor: Colors.black,
-          //     fillColor: WidgetStateProperty.resolveWith((states) {
-          //       if (states.contains(WidgetState.selected)) {
-          //         return Colors.grey[900];
-          //       }
-          //       return null;
-          //     }),
-          //     shape: const CircleBorder(),
-          //     onChanged: (value) {
-          //       setState(() {
-          //         isCompleted = value;
-          //       });
-          //       Task changedTask = Task(
-          //           id: widget.task.id,
-          //           name: widget.task.name,
-          //           allDay: widget.task.allDay,
-          //           repetition: widget.task.repetition,
-          //           date: widget.task.date,
-          //           priority: widget.task.priority,
-          //           reminder: widget.task.reminder,
-          //           info: widget.task.info,
-          //           isPomodoro: widget.task.isPomodoro,
-          //           isCompleted: isCompleted!);
-          //       context.read<CalendarCubit>().changeTask(changedTask);
-          //     }),
           CustomCheckbox(
             value: isCompleted,
             onChanged: (value) {
@@ -136,6 +110,7 @@ class _TaskItemState extends State<TaskItem> {
                                   child: Text(t.Change),
                                   onTap: () {
                                     print('action_menu_edit');
+                                    context.read<EditTaskCubit>().fetchEditTask(task:widget.task);
                                     final TextEditingController nameController = TextEditingController();
                                     final TextEditingController infoController = TextEditingController();
                                     showModalBottomSheet(
@@ -150,6 +125,7 @@ class _TaskItemState extends State<TaskItem> {
                                         return NewTaskSheet(
                                           nameController: nameController,
                                           infoController: infoController,
+                                          isNew: false,
                                         );
                                       },
                                     );
@@ -200,13 +176,6 @@ class _TaskItemState extends State<TaskItem> {
                             },
                           ),
                         ),
-                        // IconButton(
-                        //   onPressed: () {},
-                        //   icon: Image.asset(
-                        //     'assets/icons/action_menu.png',
-                        //     height: 25,
-                        //   ),
-                        // ),
                       ],
                     ),
                     Text(

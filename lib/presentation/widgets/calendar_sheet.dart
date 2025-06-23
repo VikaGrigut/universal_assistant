@@ -46,7 +46,6 @@ class _CalendarSheetState extends State<CalendarSheet> {
 
   @override
   Widget build(BuildContext context) {
-    //final month = context.select((CalendarCubit cubit) => cubit.state.month);
     final month = widget.isTask
         ? (widget.isNew
             ? context.select((NewTaskCubit cubit) => cubit.state.month)
@@ -95,8 +94,6 @@ class _CalendarSheetState extends State<CalendarSheet> {
                   collapsed: Column(
                     children: [
                       CalendarGrid(
-
-                          ///add
                           color: Colors.white,
                           isNewTask: widget.isTask,
                           isNewEvent: !widget.isTask,
@@ -108,11 +105,7 @@ class _CalendarSheetState extends State<CalendarSheet> {
                                     ..changeMonth(month))
                               : (month) => context.read<NewEventCubit>()
                                 ..changeMonth(month)
-                          //..fetchNewTask(),
                           ),
-                      // const SizedBox(
-                      //   height: 4,
-                      // ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 7, vertical: 4),
@@ -139,7 +132,7 @@ class _CalendarSheetState extends State<CalendarSheet> {
                             ..fetchNewTask()
                           : (month) => context.read<EditTaskCubit>()
                             ..changeMonth(month)
-                            ..fetchEditTask())
+                            )//..fetchEditTask()
                       : (month) => context.read<NewEventCubit>()
                         ..changeMonth(month)
                         ..fetchNewEvent(),
@@ -148,22 +141,6 @@ class _CalendarSheetState extends State<CalendarSheet> {
                   actions: [
                     CalendarSheetAction(
                       onPressed: () async {
-                        // timeDuration = await showModalBottomSheet<Duration>(
-                        //   shape: const RoundedRectangleBorder(
-                        //     borderRadius: BorderRadius.vertical(
-                        //       top: Radius.circular(12),
-                        //     ),
-                        //   ),
-                        //   backgroundColor: Colors.white,
-                        //   context: context,
-                        //   builder: (BuildContext context) => TimePickerSheet(
-                        //     duration:
-                        //         timeDuration,
-                        //     // hour: time?[0],
-                        //     // minute: time?[1],
-                        //   ),
-                        // );
-                        //final date = widget.isTask ? context.select((NewTaskCubit cubit) => cubit.state.task.date) : context.select((NewEventCubit cubit) => cubit.state.event.dateStart);
                         final duration =
                             Duration(hours: time[0], minutes: time[1]);
                         showDialog(
@@ -181,9 +158,6 @@ class _CalendarSheetState extends State<CalendarSheet> {
                                 ),
                         );
 
-                        // setState(() {
-                        //   time = [duration!.inHours,duration!.inMinutes%60];
-                        // });
                       },
                       icon: const Icon(Icons.timer),
                       text: widget.isTask

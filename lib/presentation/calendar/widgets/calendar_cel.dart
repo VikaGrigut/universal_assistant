@@ -51,7 +51,6 @@ class CalendarCell extends StatelessWidget {
                 decoration:  BoxDecoration(
                   color: selected ? Colors.deepPurpleAccent : Colors.white,
                     shape: BoxShape.circle,
-                    //borderRadius: BorderRadius.all(Radius.circular(7),)
                     ),
                 child: Padding(
 
@@ -68,7 +67,6 @@ class CalendarCell extends StatelessWidget {
                         child: Text(
                           date_utils.DateUtils.formatDay(
                             date,
-                            //locale: Localizations.localeOf(context).languageCode,
                             isTimezone: false,
                           ),
                           textAlign: TextAlign.center,
@@ -82,7 +80,6 @@ class CalendarCell extends StatelessWidget {
                       Positioned(
                         right: -8,
                           bottom: 3,
-                          //height: 20,
                           width: 15,
                           child: DecoratedBox(
                               decoration: BoxDecoration(

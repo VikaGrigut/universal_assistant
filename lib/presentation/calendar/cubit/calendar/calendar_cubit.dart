@@ -77,13 +77,6 @@ class CalendarCubit extends Cubit<CalendarState> {
   }
 
   void changeSelectedDate(DateTime date) {
-    // final selectedDates = [...state.selectedDates];
-    //
-    // if (isSelected) {
-    //   selectedDates.remove(date);
-    // } else {
-    //   selectedDates.add(date);
-    // }
 
     emit(state.copyWith(
         selectedDay: date,
@@ -118,8 +111,7 @@ class CalendarCubit extends Cubit<CalendarState> {
       else{
         Reminder.notificationService.deleteNotification(task.reminder.id);
       }
-    }// лучше как есть или удалять в репозитории таск и доставать новый список(скорее всего как есть, так как не надо ждать получения нового списка)
-
+    }
     emit(state.copyWith(tasks: newList));
   }
 
@@ -153,8 +145,11 @@ class CalendarCubit extends Cubit<CalendarState> {
     for (var event in state.events) {
       if(event.id != eventId){
         newList.add(event);
-      }//добавить удаление уведомления
-    }// лучше как есть или удалять в репозитории таск и доставать новый список(скорее всего как есть, так как не надо ждать получения нового списка)
+        for(final reminder in event.reminders){
+          Reminder.notificationService.deleteNotification(reminder.id);
+        }
+      }
+    }
     _eventRepository.deleteEvent(eventId);
     emit(state.copyWith(events: newList));
   }
@@ -164,39 +159,6 @@ class CalendarCubit extends Cubit<CalendarState> {
     final tasks = _sortTasks(allTasks ?? [], date: date);
     return (events.length + tasks.length);
   }
-
-  // Future<void> submit() async {
-  //   emit(state.copyWith(status: CalendarStatus.loading));
-  //
-  //   try {
-  //     final masterId = _authenticationCubit.state.master.id;
-  //
-  //     final updatedWeekends = await _weekendRepository.saveMasterWeekends(
-  //       masterId,
-  //       month: state.month,
-  //       dates: state.selectedDates,
-  //       studioId: state.studio?.id,
-  //     );
-  //
-  //     final weekends = _mergeWeekends(state.weekends, updatedWeekends);
-  //
-  //     _calendarCubit.updateWeekends(weekends);
-  //
-  //     final dates = _getWeekendDates(
-  //       weekends,
-  //       studioId: state.studio?.id,
-  //     );
-  //
-  //     emit(state.copyWith(
-  //       status: CalendarStatus.success,
-  //       weekends: weekends,
-  //       initialDates: dates,
-  //       selectedDates: dates,
-  //     ));
-  //   } catch (_) {
-  //     emit(state.copyWith(status: CalendarStatus.failure));
-  //   }
-  // }
 
   List<Event> _sortEvents(List<Event> events, {DateTime? month,DateTime? date}) {
     return events
@@ -216,37 +178,4 @@ class CalendarCubit extends Cubit<CalendarState> {
         .toList();
   }
 
-  // List<DateTime> _getWeekendDates(
-  //   Iterable<Weekend> weekends, {
-  //   String? studioId,
-  // }) {
-  //   return weekends
-  //       .where((e) => e.studioId == studioId)
-  //       .map((e) => e.dates)
-  //       .where((e) => e != null)
-  //       .expand((e) => e!)
-  //       .toSet()
-  //       .toList();
-  // }
-
-  // List<Weekend> _mergeWeekends(
-  //   Iterable<Weekend> first,
-  //   Iterable<Weekend> second,
-  // ) {
-  //   final result = [...first];
-  //
-  //   for (final item in second) {
-  //     final index = result.indexWhere((e) => e.id == item.id);
-  //
-  //     if (index == -1) {
-  //       result.add(item);
-  //     } else {
-  //       result
-  //         ..removeAt(index)
-  //         ..insert(index, item);
-  //     }
-  //   }
-  //
-  //   return result;
-  // }
 }

@@ -29,7 +29,6 @@ class NewEventCubit extends Cubit<NewEventState> {
         _tagRepository = tagRepository,
         super(NewEventState());
 
-  //bool get canSubmit => state.task.name.isNotEmpty && state.task.repetition ;
 
   Future<void> fetchNewEvent() async {
     emit(state.copyWith(status: NewEventStatus.loading));
@@ -104,7 +103,6 @@ class NewEventCubit extends Cubit<NewEventState> {
   }
 
   void changeEndOfRepetition(DateTime newDate) {
-    //emit(state.copyWithTask(repetition: true));
     emit(state.copyWith(endOfRepetition: newDate)); //endOfRepetition: newDate
     print('${state.date} - ${state.endOfRepetition}');
   }
@@ -116,15 +114,7 @@ class NewEventCubit extends Cubit<NewEventState> {
         DateTime(date.year, date.month, date.day, startTime[0], startTime[1]);
     final newEndDate =
         DateTime(date.year, date.month, date.day, endTime[0], endTime[1]);
-    // for(final reminder in state.event.reminders){
-    //   if(reminder.id == )
-    // }
-    //
-    // final newReminder = Reminder(
-    //     id: reminder.id,
-    //     message: reminder.message,
-    //     title: reminder.title,
-    //     dateOfNotification: newStartDate);
+
     emit(state.copyWithEvent(
         dateStart: newStartDate,
         dateEnd: newEndDate)); //, reminder: newReminder ????

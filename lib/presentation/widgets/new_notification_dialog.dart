@@ -5,11 +5,8 @@ import '../../i18n/strings.g.dart';
 import 'apply_button.dart';
 
 class NewNotificationDialog extends StatefulWidget {
-  NewNotificationDialog({super.key, Duration? duration})
-      //: duration = duration ?? const Duration()
-  ;
+  NewNotificationDialog({super.key, Duration? duration});
 
-  //Duration duration;
 
   @override
   State<NewNotificationDialog> createState() => _NewNotificationDialogState();
@@ -23,9 +20,6 @@ class _NewNotificationDialogState extends State<NewNotificationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // days = widget.duration.inDays;
-    // hours = widget.duration.inHours % 24;
-    // minutes = widget.duration.inMinutes % 60;
     final widthPickers = MediaQuery.of(context).size.width / 3 - 20;
     return Dialog(
       backgroundColor: Colors.white,
@@ -63,7 +57,6 @@ class _NewNotificationDialogState extends State<NewNotificationDialog> {
                   ),
                 ),
 
-                // Часы
                 SizedBox(
                   height: 140,
                   width: widthPickers,
@@ -77,7 +70,6 @@ class _NewNotificationDialogState extends State<NewNotificationDialog> {
                   ),
                 ),
 
-                // Минуты
                 SizedBox(
                   height: 140,
                   width: widthPickers,

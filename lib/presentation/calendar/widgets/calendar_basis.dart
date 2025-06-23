@@ -85,8 +85,6 @@ class CalendarBasis extends StatelessWidget {
                         details.velocity.pixelsPerSecond.dx > 0
                             ? _previousMonth()
                             : _nextMonth(),
-                    //)
-                    // Container(
                     child: expandedWithButtons ?? collapsed)
               ],
             )));

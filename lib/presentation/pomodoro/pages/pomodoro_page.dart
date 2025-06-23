@@ -19,72 +19,6 @@ class PomodoroPage extends StatefulWidget {
 }
 
 class _PomodoroPageState extends State<PomodoroPage> {
-  // final int workDuration = 10 * 60; // 25 минут
-  // final int breakDuration = 5 * 60; // 5 минут
-  // final int longBreakDuration = 15 * 60; // 15 минут
-  //
-  // int currentDuration = 10 * 60;
-  // int timeLeft = 10 * 60;
-  // int sessionCount = 0;
-  //
-  // bool isRunning = false;
-  // bool isWorkTime = true;
-  // Timer? timer;
-
-  //final AudioPlayer _audioPlayer = AudioPlayer();
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   resetTimer();
-  // }
-  //
-  // void resetTimer() {
-  //   setState(() {
-  //     timeLeft = currentDuration;
-  //     isRunning = false;
-  //     timer?.cancel();
-  //   });
-  // }
-  //
-  // void startTimer() {
-  //   setState(() {
-  //     isRunning = true;
-  //   });
-  //
-  //   timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //     if (timeLeft > 0) {
-  //       setState(() {
-  //         timeLeft--;
-  //       });
-  //     } else {
-  //       timer.cancel();
-  //       //playSound();
-  //       switchSession();
-  //     }
-  //   });
-  // }
-  //
-  // void switchSession() {
-  //   setState(() {
-  //     isWorkTime = !isWorkTime;
-  //
-  //     if (isWorkTime) {
-  //       currentDuration = workDuration;
-  //     } else {
-  //       sessionCount++;
-  //       currentDuration = (sessionCount % 4 == 0) ? longBreakDuration : breakDuration;
-  //     }
-  //
-  //     timeLeft = currentDuration;
-  //   });
-  //
-  //   startTimer();
-  // }
-
-  // void playSound() async {
-  //   await _audioPlayer.play(AssetSource('sounds/ding.mp3'));
-  // }
 
   String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
@@ -228,18 +162,6 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
-                        // Row(
-                        //   mainAxisSize: MainAxisSize.min,
-                        //   children: [
-                        //
-                        //     // IconButton(
-                        //     //   icon: const Icon(Icons.replay),
-                        //     //   onPressed: () {
-                        //     //     context.read<PomodoroCubit>().reset();
-                        //     //   },
-                        //     // )
-                        //   ],
-                        // ),
                       ],
                     ),
                   ),
@@ -268,10 +190,4 @@ class _PomodoroPageState extends State<PomodoroPage> {
     );
   }
 
-  // @override
-  // void dispose() {
-  //   timer?.cancel();
-  //   //_audioPlayer.dispose();
-  //   super.dispose();
-  // }
 }

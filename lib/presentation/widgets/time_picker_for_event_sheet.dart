@@ -29,15 +29,6 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // int selectedHour = widget.hour ?? 9;
-    // int selectedMinute = widget.minute ?? 0;
-    // final buttonWidth = MediaQuery.of(context).size.width / 2;
-    //widget.duration ??= const Duration(hours: 9);
-    // startTime = [
-    //   widget.durationStart.inHours,
-    //   widget.durationStart.inMinutes % 60
-    // ];
-    // endTime = [widget.durationEnd.inHours, widget.durationEnd.inMinutes % 60];
     return AlertDialog(
       title: Text(
         t.SelectTime,
@@ -59,9 +50,6 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
                   TabBar(
                     tabs: [
                       Tab(
-                        // text: (startTime[0] == -1 && startTime[1] == -1)
-                        //     ? 'От'
-                        //     : '${NumberFormat("00").format(startTime[0])}:${startTime[1] == -1 ? NumberFormat("00").format(0) : NumberFormat("00").format(startTime[1])}',
                         child: Container(
                           decoration: const BoxDecoration(
                             color: Colors.grey,
@@ -219,21 +207,6 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
               ),
             ),
           ),
-
-          // SizedBox(
-          //   width: MediaQuery.of(context).size.width * 0.8,
-          //   height: 250,
-          //   child: CupertinoTimerPicker(
-          //     alignment: Alignment.center,
-          //     initialTimerDuration: widget.duration!,
-          //     mode: CupertinoTimerPickerMode.hm,
-          //     onTimerDurationChanged: (newDuration) {
-          //       setState(() {
-          //         widget.duration = newDuration;
-          //       });
-          //     },
-          //   ),
-          // ),
           const SizedBox(
             height: 10,
           ),
@@ -256,7 +229,6 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
               context.read<NewEventCubit>()
                 ..changeTime(startTime, endTime)
                 ..fetchNewEvent();
-              // Navigator.pop(context, [selectedHour, selectedMinute]);
               Navigator.pop(
                 context,
               );

@@ -63,9 +63,7 @@ class SpheresView extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: (){
-                //Navigator.push(context, ChangeSpheresPage.route());
-                context.read<HomeCubit>().setTab(HomeTab.changeTags);//Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeTagsPage()));
-                // Navigator.of(context,rootNavigator: true).pushReplacement(ChangeSpheresPage.route());
+                context.read<HomeCubit>().setTab(HomeTab.changeTags);
                 },
               icon: Image.asset('assets/icons/parameters.png',height: 25,),
             ),

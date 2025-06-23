@@ -27,7 +27,6 @@ class NewTaskCubit extends Cubit<NewTaskState> {
         _tagRepository = tagRepository,
         super(NewTaskState());
 
-  //bool get canSubmit => state.task.name.isNotEmpty && state.task.repetition ;
 
   Future<void> fetchNewTask() async {
     emit(state.copyWith(status: NewTaskStatus.loading));
@@ -169,7 +168,8 @@ class NewTaskCubit extends Cubit<NewTaskState> {
         message: reminder.message,
         title: reminder.title,
         dateOfNotification: newDate);
-    emit(state.copyWithTask(date: newDate)); //, reminder: newReminder ????
+    emit(state.copyWithTask(date: newDate));
+    emit(state.copyWith(date: newDate));//, reminder: newReminder ????
   }
 
   void changeName(String newName) {

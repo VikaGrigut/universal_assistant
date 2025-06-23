@@ -29,4 +29,3 @@ class HomeCubit extends Cubit<HomeState> {
     return code == Languages.ru  ? 'ru' : code == Languages.be ? 'be' : 'en';
   }
 }
-//tab: tab ?? HomeTab.calendar {HomeTab? tab}

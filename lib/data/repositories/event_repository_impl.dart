@@ -11,29 +11,12 @@ import '../models/tag_model.dart';
 class EventRepositoryImpl implements EventRepository {
   final LocaleDBProvider dbProvider = LocaleDBProvider.dbProvider;
 
-  // @override
-  // Future<bool> changeReminder(int eventId, int reminderId, Reminder reminder) {
-  //   throw UnimplementedError();
-  // }
-
   @override
   Future<bool> deleteEvent(int eventId) async {
     final db = await dbProvider.db;
     final result = await db.delete('Events', where: 'id = ?', whereArgs: [eventId]);
     return result == 0 ? false : true;
   }
-
-  // @override
-  // Future<bool> deleteReminder(int eventId, int reminderId) async {
-  //   final db = await dbProvider.eventDB;
-  //   final result = await db.query('Events', where: 'id = ?', whereArgs: [eventId]);
-  //   if(result.isEmpty){
-  //     return false;
-  //   }else{
-  //     EventModel eventModel = EventModel.fromJson(result.first);
-  //
-  //   }
-  // }
 
   @override
   Future<List<Event>?> getAllEvents() async {

@@ -60,11 +60,10 @@ class _MatrixPageState extends State<MatrixPage> {
               childAspectRatio: 1 / 2,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
-              //mainAxisExtent: (MediaQuery.of(context).size.height - 100)/2
             ),
             itemCount: matrixTitles.length,
             itemBuilder: (context, index) {
-              final List<Task> sortedTasks = context.read<MatrixCubit>().sortTasks(Priority.values[index]);//tasks == null ? [] :
+              final List<Task> sortedTasks = context.read<MatrixCubit>().sortTasks(Priority.values[index]);
               return GestureDetector(
                 onTap: () {
                   if (sortedTasks.isNotEmpty) {
@@ -154,11 +153,6 @@ class _MatrixPageState extends State<MatrixPage> {
                                           sortedTasks[index].name,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          //minFontSize: 12,
-                                          //overflow: TextOverflow.ellipsis,
-                                          // style: const TextStyle(
-                                          //   fontSize: 12
-                                          // ),
                                         ),
                                       ),
                                     ],

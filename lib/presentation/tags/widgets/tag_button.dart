@@ -10,11 +10,9 @@ class TagButton extends StatelessWidget {
 
   Tag sphere;
   bool selected;
-  //int index;
 
   @override
   Widget build(BuildContext context) {
-    //final name = index == 0 ? 'Все' :sphere.name;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3),
       child: ElevatedButton(

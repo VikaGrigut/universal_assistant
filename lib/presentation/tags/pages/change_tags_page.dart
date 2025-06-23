@@ -45,25 +45,9 @@ class _ChangeTagsViewState extends State<ChangeTagsView> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          // actions: [
-          //   IconButton(
-          //       onPressed: () {
-          //         context.read<TagsCubit>()
-          //           ..saveTags(tags)
-          //           ..fetchTags(); //
-          //         Navigator.pop(context);
-          //         //Navigator.of(context).pushReplacement(SpheresPage.route());
-          //       },
-          //       icon: const Icon(
-          //         Icons.check,
-          //         color: Colors.black,
-          //       ))
-          // ],
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              //Navigator.of(context,rootNavigator: true).pushReplacement(SpheresPage.route());
-              //Navigator.pop(context);
               context.read<HomeCubit>().setTab(HomeTab.tags);
             },
             color: Colors.black,
@@ -71,7 +55,7 @@ class _ChangeTagsViewState extends State<ChangeTagsView> {
           centerTitle: true,
           title: Text(
             t.Parameters,
-          ), //style: TextStyle(fontSize: )
+          ),
         ),
         backgroundColor: Colors.grey[300],
         body: Padding(

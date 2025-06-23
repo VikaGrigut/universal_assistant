@@ -24,8 +24,8 @@ class NewTaskSheet extends StatelessWidget {
       {super.key,
       required this.nameController,
       required this.infoController,
-      bool? newTask})
-      : isNew = newTask ?? false;
+      bool? isNew})
+      : isNew = isNew ?? false;
   DateTime? date;
   List<int>? time;
   Priority? priority;
@@ -45,9 +45,8 @@ class NewTaskSheet extends StatelessWidget {
     if(!isNew){
       nameController.text = context.select((EditTaskCubit cubit) => cubit.state.task.name);
       infoController.text = context.select((EditTaskCubit cubit) => cubit.state.task.info);
+      date = selected;
     }
-    // final priorityCubit =
-    //     context.select((NewTaskCubit cubit) => cubit.state.task.priority);
     final width = MediaQuery.of(context).size.width / 23;
     return Padding(
       padding:
@@ -90,14 +89,6 @@ class NewTaskSheet extends StatelessWidget {
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                   ),
-                  // onEditingComplete: (){
-                  //   print('object');
-                  //   FocusScope.of(context).unfocus();
-                  // },
-                  // onTapOutside: (event){
-                  //   print('outside');
-                  //   FocusScope.of(context).unfocus();
-                  // },
                 ),
               ),
               Padding(
@@ -133,74 +124,6 @@ class NewTaskSheet extends StatelessWidget {
                           ? t.Today
                           : DateFormat.yMMMMd().format(selected),
                     ),
-                    // DecoratedBox(
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       //border: Border.all(color: Colors.black),
-                    //       color: Colors.grey),
-                    //   child: Row(
-                    //     children: [
-                    //       ,
-                    //       // const SizedBox(
-                    //       //   width: 10,
-                    //       // )
-                    //     ],
-                    //   ),
-                    // ),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //         icon: const Icon(
-                    //           Icons.access_time,
-                    //           size: buttonSize,
-                    //         ),
-                    //         onPressed: () async {
-                    //           time = await showModalBottomSheet<List<int>>(
-                    //             shape: const RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.vertical(
-                    //                 top: Radius.circular(12),
-                    //               ),
-                    //             ),
-                    //             backgroundColor: Colors.white,
-                    //             context: context,
-                    //             builder: (BuildContext context) =>
-                    //                 TimePickerSheet(
-                    //               hour: time?[0],
-                    //               minute: time?[1],
-                    //             ),
-                    //           );
-                    //           print(time);
-                    //         })),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //         icon: SvgPicture.asset(
-                    //           'assets/icons/notification.svg',
-                    //           height: buttonSize,
-                    //         ),
-                    //         onPressed: () {
-                    //           // showModalBottomSheet<List<int>>(
-                    //           //   shape: const RoundedRectangleBorder(
-                    //           //     borderRadius: BorderRadius.vertical(
-                    //           //       top: Radius.circular(12),
-                    //           //     ),
-                    //           //   ),
-                    //           //   backgroundColor: Colors.white,
-                    //           //   context: context,
-                    //           //   builder: (BuildContext context) =>
-                    //           //       NotificationSheet(),
-                    //           // );
-                    //         })),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //),
                     TaskSheetButton(
                       icon: Image.asset(
                         'assets/icons/hashtag2.png',
@@ -249,16 +172,6 @@ class NewTaskSheet extends StatelessWidget {
                           ? t.Priority
                           : getPriorityText(priority!),
                     ),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //         icon: SvgPicture.asset(
-                    //           'assets/icons/rotate-reverse.svg',
-                    //           height: buttonSize,
-                    //         ),
-                    //         onPressed: () {})),
                   ],
                 ),
               ),

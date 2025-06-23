@@ -24,53 +24,7 @@ class _EventItemState extends State<EventItem> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       child: Row(
         children: [
-          // Checkbox(
-          //     value: isCompleted,
-          //     checkColor: Colors.black,
-          //     fillColor: WidgetStateProperty.resolveWith((states) {
-          //       if (states.contains(WidgetState.selected)) {
-          //         return Colors.grey[900];
-          //       }
-          //       return null;
-          //     }),
-          //     shape: const CircleBorder(),
-          //     onChanged: (value) {
-          //       setState(() {
-          //         isCompleted = value;
-          //       });
-          //       Task changedTask = Task(
-          //           id: widget.task.id,
-          //           name: widget.task.name,
-          //           allDay: widget.task.allDay,
-          //           repetition: widget.task.repetition,
-          //           date: widget.task.date,
-          //           priority: widget.task.priority,
-          //           reminder: widget.task.reminder,
-          //           info: widget.task.info,
-          //           isPomodoro: widget.task.isPomodoro,
-          //           isCompleted: isCompleted!);
-          //       context.read<CalendarCubit>().changeTask(changedTask);
-          //     }),
-          // CustomCheckbox(
-          //   value: isCompleted,
-          //   onChanged: (value) {
-          //     setState(() {
-          //       isCompleted = value;
-          //     });
-          //     Task changedTask = Task(
-          //         id: widget.task.id,
-          //         name: widget.task.name,
-          //         allDay: widget.task.allDay,
-          //         repetition: widget.task.repetition,
-          //         date: widget.task.date,
-          //         priority: widget.task.priority,
-          //         reminder: widget.task.reminder,
-          //         info: widget.task.info,
-          //         isPomodoro: widget.task.isPomodoro,
-          //         isCompleted: isCompleted!);
-          //     widget.isMatrix ? context.read<MatrixCubit>().changeTask(changedTask) : context.read<CalendarCubit>().changeTask(changedTask);
-          //   },
-          // ),
+
           const SizedBox(
             width: 18,
           ),
@@ -100,10 +54,7 @@ class _EventItemState extends State<EventItem> {
                           style: const TextStyle(
                             fontSize: 20,
                             color: Colors
-                                .black, //isCompleted! ? Colors.grey[700] :
-                            // decoration: isCompleted!
-                            //     ? TextDecoration.lineThrough
-                            //     : null,
+                                .black,
                           ),
                         ),
                         Theme(
@@ -119,15 +70,8 @@ class _EventItemState extends State<EventItem> {
                               'assets/icons/action_menu.png',
                               height: 25,
                             ),
-                            //enabled: !isCompleted!,
                             itemBuilder: (context) {
                               return [
-                                // PopupMenuItem(
-                                //   child: Text(t.Change),
-                                //   onTap: () {
-                                //     print('action_menu_edit');
-                                //   },
-                                // ),
                                 PopupMenuItem(
                                   child: Text(t.Delete),
                                   onTap: () {
@@ -173,13 +117,6 @@ class _EventItemState extends State<EventItem> {
                             },
                           ),
                         ),
-                        // IconButton(
-                        //   onPressed: () {},
-                        //   icon: Image.asset(
-                        //     'assets/icons/action_menu.png',
-                        //     height: 25,
-                        //   ),
-                        // ),
                       ],
                     ),
                     Text(

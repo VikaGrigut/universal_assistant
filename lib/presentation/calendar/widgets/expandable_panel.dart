@@ -68,11 +68,7 @@ class _ExpandablePanelState extends State<ExpandablePanel> {
       padding: widget.headerPadding,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Expanded(
-          //   child: widget.header,
-          // ),
           Row(
             children: [
               widget.header,
@@ -81,7 +77,7 @@ class _ExpandablePanelState extends State<ExpandablePanel> {
             ],
           ),
           IconButton(
-            onPressed: () => context.read<CalendarCubit>()..currentDate(),
+            onPressed: () => context.read<CalendarCubit>()..currentDate()..fetchCalendar(),
             icon: const Icon(
               Icons.calendar_today,
               color: Colors.black,

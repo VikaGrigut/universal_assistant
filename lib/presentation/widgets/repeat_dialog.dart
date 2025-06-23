@@ -140,7 +140,6 @@ class _RepeatDialogState extends State<RepeatDialog> {
                         isNew: widget.isNew,
                       ),
 
-                      ///add
                     );
                     setState(() {
                       endOfRepeat ??= endOfRepetition;
@@ -374,7 +373,6 @@ class IntervalRepetition extends StatelessWidget {
                           (index) => index == 0
                               ? Text(t.EveryMonth)
 
-                              ///(date: date.day)
                               : Text(
                                   'Ежемесячно в ${getWeekdayOccurrenceInMonth(date)} ${date.weekday}')),
                 ),

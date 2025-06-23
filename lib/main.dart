@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:universal_assistant/injection.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/calendar/calendar_cubit.dart';
+import 'package:universal_assistant/presentation/calendar/cubit/editTask/edit_task_cubit.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newEvent/new_event_cubit.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task_cubit.dart';
 import 'package:universal_assistant/presentation/home/cubit/home_cubit.dart';
@@ -20,17 +21,9 @@ import 'i18n/strings.g.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // await Hive.initFlutter();
-  // // Hive.registerAdapter(AppSettingsModelAdapter());
-  // // Hive.registerAdapter(PomodoroSettingsModelAdapter());
-  // // Hive.registerAdapter(DoNotDisturbSettingsModelAdapter());
-  // // Hive.registerAdapter(SphereModelAdapter());
-  //
-  // await Hive.openBox('settings');
 
   tz.initializeTimeZones();
-  //final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-  //tz.setLocalLocation(tz.getLocation(timeZoneName));
+
   await NotificationService().initialize();
   await initializeDateFormatting('ru_RU', null);
 
@@ -50,6 +43,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider.value(value: locator.get<CalendarCubit>()),
         BlocProvider.value(value: locator.get<NewTaskCubit>()),
+        BlocProvider.value(value: locator.get<EditTaskCubit>()),
         BlocProvider.value(value: locator.get<HomeCubit>()),
         BlocProvider.value(value: locator.get<MatrixCubit>()),
         BlocProvider.value(value: locator.get<TagsCubit>()),
@@ -59,10 +53,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        //locale: const Locale('ru', 'RU'),
         supportedLocales: const [
           Locale('ru', 'RU'),
           Locale('en', 'US'),
+          Locale('be', 'BE'),
         ],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,

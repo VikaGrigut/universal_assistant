@@ -7,6 +7,7 @@ import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task
 
 import '../../../domain/utils/date_time_utils.dart';
 import '../../utils/date_utils.dart';
+import '../cubit/editTask/edit_task_cubit.dart';
 import 'calendar_cel.dart';
 
 class CalendarGrid extends StatelessWidget {
@@ -16,15 +17,18 @@ class CalendarGrid extends StatelessWidget {
     bool? isNewTask,
     bool? isRepetition,
     bool? isNewEvent,
+    bool? isNew,
     this.onSwipe,
-  })  : isNewTask = isNewTask ?? false,
+  })  : isTask = isNewTask ?? false,
         isNewEvent = isNewEvent ?? false,
+        isNew = isNew ?? false,
         isRepetition = isRepetition ?? false;
 
   Color color;
   late DateTime month;
   Function? onSwipe;
-  final bool isNewTask;
+  final bool isTask;
+  final bool isNew;
   final bool isRepetition;
   final bool isNewEvent;
 
@@ -32,32 +36,30 @@ class CalendarGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final endOfRepetition = isNewEvent
         ? context.select((NewEventCubit cubit) => cubit.state.endOfRepetition)
-        : context.select((NewTaskCubit cubit) => cubit.state.endOfRepetition);
-    final isNewActivity = isNewTask || isNewEvent;
+        : (isNew ? context.select((NewTaskCubit cubit) => cubit.state.endOfRepetition):context.select((EditTaskCubit cubit) => cubit.state.endOfRepetition));
+    final isNewActivity = isTask || isNewEvent;
     month = isNewActivity
         ? (isRepetition
             ? DateTime(endOfRepetition.year, endOfRepetition.month)
-            : (isNewTask
-                ? context.select((NewTaskCubit cubit) => cubit.state.month)
+            : (isTask
+                ? (isNew ? context.select((NewTaskCubit cubit) => cubit.state.month):context.select((EditTaskCubit cubit) => cubit.state.month))
                 : context.select((NewEventCubit cubit) => cubit.state.month)))
         : context.select((CalendarCubit cubit) => cubit.state.month);
     final selectedDay = isNewActivity
         ? (isRepetition
             ? context
                 .select((NewTaskCubit cubit) => cubit.state.endOfRepetition)
-            : (isNewTask
-                ? context.select((NewTaskCubit cubit) => cubit.state.date)
+            : (isTask
+                ? (isNew ? context.select((NewTaskCubit cubit) => cubit.state.date) : context.select((EditTaskCubit cubit) => cubit.state.date))
                 : context.select((NewEventCubit cubit) => cubit.state.date)))
         : context.select((CalendarCubit cubit) => cubit.state.selectedDay);
-    final now = DateTime.now(); //DateFormat.MMMM();
+    final now = DateTime.now();
 
     final cells = GridView.count(
       padding: const EdgeInsets.symmetric(vertical: 0.5),
       primary: false,
       shrinkWrap: true,
       crossAxisCount: DateUtils.weekdays.length,
-      //mainAxisSpacing: 1,
-      //crossAxisSpacing: 1,
       childAspectRatio: 1,
       children: _buildCells(context, month, selectedDay, color),
     );
@@ -67,10 +69,6 @@ class CalendarGrid extends StatelessWidget {
           details.velocity.pixelsPerSecond.dx > 0
               ? _previousMonth()
               : _nextMonth(),
-      // Container(
-      // decoration: const BoxDecoration(
-      //color: CupertinoColors.quaternarySystemFill.withOpacity(0.08),
-      //borderRadius: BorderRadius.all(Radius.circular(6)),
 
       child: cells,
     );
@@ -84,7 +82,8 @@ class CalendarGrid extends StatelessWidget {
               month: month,
               selectedDay: selectedDay,
               color: color,
-              isNewTask: isNewTask,
+              isNewTask: isTask,
+              isNew: isNew,
               isNewEvent: isNewEvent,
               isRepetition: isRepetition,
             ))
@@ -110,6 +109,7 @@ class CalendarGridCell extends StatelessWidget {
       required this.selectedDay,
       required this.isNewTask,
       required this.isNewEvent,
+      required this.isNew,
       required this.isRepetition,
       required this.color});
 
@@ -118,6 +118,7 @@ class CalendarGridCell extends StatelessWidget {
   final DateTime selectedDay;
   final Color color;
   final bool isNewTask;
+  final bool isNew;
   final bool isNewEvent;
   final bool isRepetition;
 
@@ -142,6 +143,13 @@ class CalendarGridCell extends StatelessWidget {
         : ((date) => context.read<NewTaskCubit>()
           ..changeDate(date)
           ..fetchNewTask());
+    final onTapForEditTask = isRepetition
+        ? ((date) => context.read<EditTaskCubit>()
+          ..changeEndOfRepetition(date)
+          ..fetchEditTask())
+        : ((date) => context.read<EditTaskCubit>()
+          ..changeDate(date)
+          ..fetchEditTask());
     final onTapForNewEvent = isRepetition
         ? ((date) => context.read<NewEventCubit>()
           ..changeEndOfRepetition(date)
@@ -150,7 +158,7 @@ class CalendarGridCell extends StatelessWidget {
           ..changeDate(date)
           ..fetchNewEvent());
     final onTap = isNewTask
-        ? onTapForNewTask
+        ? (isNew ? onTapForNewTask:onTapForEditTask)
         : (isNewEvent
             ? onTapForNewEvent
             : (date) => context.read<CalendarCubit>()
@@ -166,11 +174,6 @@ class CalendarGridCell extends StatelessWidget {
       numberOfActivities: numberOfActivities,
       children: const [
         SizedBox(height: 9),
-        // CheckBox(
-        //   value: isSelected,
-        //   onChanged: (selected) =>
-        //       context.read<WeekendsCubit>().selectDate(day, !selected),
-        // ),
       ],
     );
   }

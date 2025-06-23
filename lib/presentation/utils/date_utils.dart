@@ -56,7 +56,7 @@ abstract class DateUtils {
     bool isTimezone = true,
   }) {
     final timezoneDate = /*isTimezone ? DateTimeProvider.from(date) :*/ date;
-    return DateFormat.yMd('ru_RU').format(timezoneDate);
+    return DateFormat.yMd(locale).format(timezoneDate);
   }
 
   static String formatShortDate(

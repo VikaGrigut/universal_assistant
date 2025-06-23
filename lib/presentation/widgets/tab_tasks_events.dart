@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:universal_assistant/domain/entities/event.dart';
 import 'package:universal_assistant/domain/entities/task.dart';
 import 'package:universal_assistant/presentation/widgets/tasks_list.dart';
+import 'package:universal_assistant/i18n/strings.g.dart';
 
 import 'events_list.dart';
 
@@ -21,13 +22,13 @@ class TabTasksEvents extends StatelessWidget {
                   length: 2,
                   child: Column(
                     children: [
-                      const TabBar(
+                      TabBar(
                         tabs: [
                           Tab(
-                            text: 'Задачи',
+                            text: t.Tasks,
                           ),
                           Tab(
-                            text: 'События',
+                            text: t.Events,
                           ),
                         ],
                         indicatorColor: Colors.black,
@@ -37,17 +38,17 @@ class TabTasksEvents extends StatelessWidget {
                         child: TabBarView(
                           children: [
                             tasks.isEmpty
-                                ? const Center(
+                                ? Center(
                                     child:
-                                        Text('Пока нет запланированных задач'),
+                                        Text(t.NoTasks),
                                   )
                                 : TasksList(
                                     tasks: tasks,
                                   ),
                             events.isEmpty
-                                ? const Center(
+                                ? Center(
                                     child: Text(
-                                        'Пока нет запланированных событий'),
+                                        t.NoEvents),
                                   )
                                 : EventsList(events: events),
                           ],

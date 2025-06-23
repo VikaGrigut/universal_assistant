@@ -110,7 +110,7 @@ class NewEventState extends Equatable {
     DateTime? dateStart,
     DateTime? dateEnd,
     Priority? priority,
-    Tag? tag,
+    List<Tag>? tags,
     List<Reminder>? reminders,
     String? info,
     bool? isPomodoro,
@@ -125,7 +125,7 @@ class NewEventState extends Equatable {
         periodicity: periodicity ?? event.periodicity,
         dateStart: dateStart ?? event.dateStart,
         dateEnd: dateEnd ?? event.dateEnd,
-        tag: tag ?? event.tag,
+        tags: tags ?? event.tags,
         reminders: reminders ?? event.reminders,
         info: info ?? event.info,
       ));

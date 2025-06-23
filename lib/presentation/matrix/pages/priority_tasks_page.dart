@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:universal_assistant/core/enums/languages.dart';
 import 'package:universal_assistant/core/enums/priority.dart';
 import 'package:universal_assistant/main.dart';
+import 'package:universal_assistant/presentation/home/cubit/home_cubit.dart';
 import 'package:universal_assistant/presentation/matrix/cubit/matrix_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/task_item.dart';
 
 import '../../../domain/entities/task.dart';
+import '../../../i18n/strings.g.dart';
 
 class PriorityTasksPage extends StatelessWidget {
   PriorityTasksPage(
@@ -26,11 +30,12 @@ class PriorityTasksPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final tasks = context.read<MatrixCubit>().sortTasks(priority);
     final dates = _findDifferentDates(tasks);
+    final code = context.read<HomeCubit>().getLanguageString();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
-          title: Text('Матрица Эйзенхауэра'),
+          title: Text(t.Matrix),
           backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           leading: IconButton(
@@ -96,7 +101,7 @@ class PriorityTasksPage extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                _formatDate(dates[index]),
+                                _formatDate(dates[index],code),
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500
@@ -151,17 +156,17 @@ class PriorityTasksPage extends StatelessWidget {
         .toList();
   }
 
-  String _formatDate(DateTime date) {
-    // Устанавливаем локаль
-    final DateFormat dayFormat = DateFormat('dd', 'ru');
-    final DateFormat monthFormat = DateFormat('MMMM', 'ru'); // Март
-    final DateFormat weekdayFormat = DateFormat.E('ru'); // Ср
+  String _formatDate(DateTime date, String code) {
+
+    final DateFormat dayFormat = DateFormat('dd', code);
+    final DateFormat monthFormat = DateFormat('MMMM', code);
+    final DateFormat weekdayFormat = DateFormat.E(code);
 
     String day = dayFormat.format(date); // 05
     String month = monthFormat.format(date); // марта
     String weekday = weekdayFormat.format(date); // ср
 
-    // Делаем первую букву месяца заглавной
+
     String capitalizedMonth =
         month[0].toUpperCase() + month.substring(1).toLowerCase();
 

@@ -5,8 +5,13 @@ import 'package:universal_assistant/core/enums/priority.dart';
 import 'package:universal_assistant/main.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task_cubit.dart';
 
+import '../../i18n/strings.g.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
+
 class PrioritySheet extends StatefulWidget {
-  PrioritySheet({super.key});
+  PrioritySheet({super.key, required this.isNew});
+
+  bool isNew;
 
   @override
   State<PrioritySheet> createState() => _PrioritySheetState();
@@ -17,20 +22,19 @@ class _PrioritySheetState extends State<PrioritySheet> {
 
   //final int checkedIndex;
   final List<String> text = [
-    'Важно и срочно',
-    'Важно, но не срочно',
-    'Не важно, но срочно',
-    'Не важно и не срочно'
+    t.ImportantAndUrgent,
+    t.ImportantAndNotUrgent,
+    t.NotImportantAndUrgent,
+    t.NotImportantAndNotUrgent
   ];
 
   @override
   Widget build(BuildContext context) {
-    int checkedIndex =
-        context.select((NewTaskCubit cubit) => cubit.state.task.priority.index);
+    int checkedIndex = widget.isNew ? context.select((NewTaskCubit cubit) => cubit.state.task.priority.index) : context.select((EditTaskCubit cubit) => cubit.state.task.priority.index);
     checkBoxStatuses[checkedIndex] = true;
     return Column(
       children: [
-        const Text('Выберите приоритет'),
+        Text(t.SelectPriority),
         Expanded(
           child: ListView.builder(
             itemCount: 4,
@@ -51,7 +55,7 @@ class _PrioritySheetState extends State<PrioritySheet> {
                       shape: const CircleBorder(),
                       value: checkBoxStatuses[index],
                       onChanged: (value) {
-                        context.read<NewTaskCubit>().changePriority(Priority.values[index]);
+                        widget.isNew ? context.read<NewTaskCubit>().changePriority(Priority.values[index]): context.read<EditTaskCubit>().changePriority(Priority.values[index]);
                           checkBoxStatuses[checkedIndex] = false;
                           checkBoxStatuses[index] = value!;
                           checkedIndex = index;
@@ -67,7 +71,7 @@ class _PrioritySheetState extends State<PrioritySheet> {
                     const SizedBox(
                       width: 5,
                     ),
-                    Text(text[index],style: TextStyle(fontSize: 20),),
+                    Text(text[index],style: const TextStyle(fontSize: 20),),
                   ],
                 ),
               );
@@ -76,18 +80,20 @@ class _PrioritySheetState extends State<PrioritySheet> {
         ),
         ElevatedButton(
           onPressed: () {
-            context
+            widget.isNew ? (context
                 .read<NewTaskCubit>()
-                .changePriority(Priority.values[checkedIndex]);
+                .changePriority(Priority.values[checkedIndex])):(context
+                .read<EditTaskCubit>()
+                .changePriority(Priority.values[checkedIndex]));
             Navigator.pop(context,Priority.values[checkedIndex]);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[350],
             //fixedSize: Size(buttonSize, 7)
           ),
-          child: const Text(
-            'Сохранить',
-            style: TextStyle(color: Colors.black),
+          child: Text(
+            t.Save,
+            style: const TextStyle(color: Colors.black),
           ),
         ),
       ],

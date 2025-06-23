@@ -20,7 +20,7 @@ class Weekdays extends StatelessWidget {
         itemBuilder: (context, index) => SizedBox(
           width: itemWidth-2,
           child: Text(
-            DateUtils.weekdays[index],
+            DateUtils.weekdays[index](),
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 13,

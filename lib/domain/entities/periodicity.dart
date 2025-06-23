@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../core/enums/measuring_period.dart';
 
 class Periodicity extends Equatable{

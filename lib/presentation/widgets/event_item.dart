@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:universal_assistant/domain/entities/event.dart';
 
+import '../../i18n/strings.g.dart';
 import '../calendar/cubit/calendar/calendar_cubit.dart';
 import 'custom_check_box.dart';
 
@@ -108,9 +109,9 @@ class _EventItemState extends State<EventItem> {
                         Theme(
                           data: Theme.of(context).copyWith(
                             popupMenuTheme: PopupMenuThemeData(
-                              color: Colors.grey[100], // цвет фона меню
+                              color: Colors.grey[100],
                               textStyle: const TextStyle(
-                                  color: Colors.black), // стиль текста
+                                  color: Colors.black),
                             ),
                           ),
                           child: PopupMenuButton(
@@ -121,22 +122,21 @@ class _EventItemState extends State<EventItem> {
                             //enabled: !isCompleted!,
                             itemBuilder: (context) {
                               return [
+                                // PopupMenuItem(
+                                //   child: Text(t.Change),
+                                //   onTap: () {
+                                //     print('action_menu_edit');
+                                //   },
+                                // ),
                                 PopupMenuItem(
-                                  child: const Text('Изменить'),
-                                  onTap: () {
-                                    print('action_menu_edit');
-                                  },
-                                ),
-                                PopupMenuItem(
-                                  child: const Text('Delete'),
+                                  child: Text(t.Delete),
                                   onTap: () {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
                                         backgroundColor: Colors.white,
-                                        title: const Text('Внимание!'),
-                                        content: const Text(
-                                            'Вы уверены, что хотите удалить задачу?'),
+                                        title: Text(t.Attention),
+                                        content: Text(t.SureDeleteEvent),
                                         actions: [
                                           TextButton(
                                             onPressed: () {
@@ -145,9 +145,9 @@ class _EventItemState extends State<EventItem> {
                                                 ..fetchCalendar();
                                               Navigator.pop(context);
                                             },
-                                            child: const Text(
-                                              'Yes',
-                                              style: TextStyle(
+                                            child: Text(
+                                              t.Yes,
+                                              style: const TextStyle(
                                                 color: Colors.black,
                                               ),
                                             ),
@@ -156,9 +156,9 @@ class _EventItemState extends State<EventItem> {
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: const Text(
-                                              'No',
-                                              style: TextStyle(
+                                            child: Text(
+                                              t.No,
+                                              style: const TextStyle(
                                                 color: Colors.black,
                                               ),
                                             ),
@@ -215,13 +215,16 @@ class _EventItemState extends State<EventItem> {
                               ),
                             ],
                           ),
-                          widget.event.tag != null
+                          widget.event.tags != null
                               ? Text(
-                                  widget.event.tag!.name,
+                                  widget.event.tags!
+                                      .map((item) => item.name)
+                                      .toString(),
                                   style: const TextStyle(
                                       fontSize: 15,
                                       color: Colors
                                           .black), //isCompleted! ? Colors.grey[700] :
+                                  overflow: TextOverflow.ellipsis,
                                 )
                               : const SizedBox.shrink(),
                         ],

@@ -5,19 +5,26 @@ import 'package:intl/intl.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newEvent/new_event_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/apply_button.dart';
 
+import '../../i18n/strings.g.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
 import '../calendar/cubit/newTask/new_task_cubit.dart';
 import '../calendar/widgets/calendar_basis.dart';
 import '../calendar/widgets/calendar_grid.dart';
 
 class DurationRepetitionSheet extends StatelessWidget {
-  const DurationRepetitionSheet({super.key, required this.isTask});
+  const DurationRepetitionSheet({super.key, required this.isTask, required this.isNew});
 
   final bool isTask;
+  final bool isNew;
 
   @override
   Widget build(BuildContext context) {
     final endOfRepetition = isTask
-        ? context.select((NewTaskCubit cubit) => cubit.state.endOfRepetition)
+        ? (isNew
+            ? context
+                .select((NewTaskCubit cubit) => cubit.state.endOfRepetition)
+            : context
+                .select((EditTaskCubit cubit) => cubit.state.endOfRepetition))
         : context.select((NewEventCubit cubit) => cubit.state.endOfRepetition);
     final month = DateTime(endOfRepetition.year, endOfRepetition.month);
 
@@ -30,9 +37,9 @@ class DurationRepetitionSheet extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Длительность до',
-              style: TextStyle(
+            Text(
+              t.DurationUpTo,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
               ),
@@ -49,8 +56,9 @@ class DurationRepetitionSheet extends StatelessWidget {
                       isNewTask: true,
                       isRepetition: true,
                       onSwipe: isTask
-                          ? (month) => context.read<NewTaskCubit>()
-                            ..changeMonthForDuration(month)
+                          ? (isNew ? (month) => context.read<NewTaskCubit>()
+                            ..changeMonthForDuration(month):(month) => context.read<EditTaskCubit>()
+                            ..changeMonthForDuration(month))
                           : (month) => context.read<NewEventCubit>()
                             ..changeMonthForDuration(month)
                       //..fetchNewTask(),
@@ -78,9 +86,11 @@ class DurationRepetitionSheet extends StatelessWidget {
               ),
               month: month,
               onSwipe: isTask
-                  ? (month) => context.read<NewTaskCubit>()
+                  ? (isNew ? (month) => context.read<NewTaskCubit>()
                     ..changeMonthForDuration(month)
-                    ..fetchNewTask()
+                    ..fetchNewTask():(month) => context.read<EditTaskCubit>()
+                    ..changeMonthForDuration(month)
+                    ..fetchEditTask())
                   : (month) => context.read<NewEventCubit>()
                     ..changeMonthForDuration(month)
                     ..fetchNewEvent(),

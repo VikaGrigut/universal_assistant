@@ -15,16 +15,21 @@ import 'package:universal_assistant/presentation/widgets/repeat_dialog.dart';
 import 'package:universal_assistant/presentation/widgets/time_picker_for_event_sheet.dart';
 import 'package:universal_assistant/presentation/widgets/time_picker_for_task_sheet.dart';
 
+import '../../i18n/strings.g.dart';
 import '../calendar/cubit/calendar/calendar_cubit.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
 import '../calendar/widgets/calendar_basis.dart';
 import '../calendar/widgets/calendar_grid.dart';
 
 class CalendarSheet extends StatefulWidget {
-  CalendarSheet({super.key, required this.selectedDate, bool? isTask})
-      : isTask = isTask ?? false;
+  CalendarSheet(
+      {super.key, required this.selectedDate, bool? isTask, bool? isNew})
+      : isTask = isTask ?? false,
+        isNew = isNew ?? false;
 
   final DateTime selectedDate;
   final bool isTask;
+  final isNew;
 
   @override
   State<CalendarSheet> createState() => _CalendarSheetState();
@@ -33,7 +38,7 @@ class CalendarSheet extends StatefulWidget {
 class _CalendarSheetState extends State<CalendarSheet> {
   List<int>? time;
 
-  String? notificationText = 'Напоминания';
+  String? notificationText = t.Reminder;
 
   Duration? timeDuration;
   List<Duration>? notificationDuration;
@@ -43,13 +48,19 @@ class _CalendarSheetState extends State<CalendarSheet> {
   Widget build(BuildContext context) {
     //final month = context.select((CalendarCubit cubit) => cubit.state.month);
     final month = widget.isTask
-        ? context.select((NewTaskCubit cubit) => cubit.state.month)
+        ? (widget.isNew
+            ? context.select((NewTaskCubit cubit) => cubit.state.month)
+            : context.select((EditTaskCubit cubit) => cubit.state.month))
         : context.select((NewEventCubit cubit) => cubit.state.month);
     final selected = widget.isTask
-        ? context.select((NewTaskCubit cubit) => cubit.state.date)
+        ? (widget.isNew
+            ? context.select((NewTaskCubit cubit) => cubit.state.date)
+            : context.select((EditTaskCubit cubit) => cubit.state.date))
         : context.select((NewEventCubit cubit) => cubit.state.date);
     final date = widget.isTask
-        ? context.select((NewTaskCubit cubit) => cubit.state.task.date)
+        ? (widget.isNew
+            ? context.select((NewTaskCubit cubit) => cubit.state.date)
+            : context.select((EditTaskCubit cubit) => cubit.state.date))
         : context.select((NewEventCubit cubit) => cubit.state.event.dateStart);
     final dateEnd = widget.isTask
         ? null
@@ -69,9 +80,9 @@ class _CalendarSheetState extends State<CalendarSheet> {
           children: [
             Column(
               children: [
-                const Text(
-                  'Выберите дату',
-                  style: TextStyle(
+                Text(
+                  t.SelectDate,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
@@ -84,12 +95,17 @@ class _CalendarSheetState extends State<CalendarSheet> {
                   collapsed: Column(
                     children: [
                       CalendarGrid(
+
+                          ///add
                           color: Colors.white,
                           isNewTask: widget.isTask,
                           isNewEvent: !widget.isTask,
                           onSwipe: widget.isTask
-                              ? (month) => context.read<NewTaskCubit>()
-                                ..changeMonth(month)
+                              ? (widget.isNew
+                                  ? (month) => context.read<NewTaskCubit>()
+                                    ..changeMonth(month)
+                                  : (month) => context.read<EditTaskCubit>()
+                                    ..changeMonth(month))
                               : (month) => context.read<NewEventCubit>()
                                 ..changeMonth(month)
                           //..fetchNewTask(),
@@ -117,9 +133,13 @@ class _CalendarSheetState extends State<CalendarSheet> {
                   ),
                   month: month,
                   onSwipe: widget.isTask
-                      ? (month) => context.read<NewTaskCubit>()
-                        ..changeMonth(month)
-                        ..fetchNewTask()
+                      ? (widget.isNew
+                          ? (month) => context.read<NewTaskCubit>()
+                            ..changeMonth(month)
+                            ..fetchNewTask()
+                          : (month) => context.read<EditTaskCubit>()
+                            ..changeMonth(month)
+                            ..fetchEditTask())
                       : (month) => context.read<NewEventCubit>()
                         ..changeMonth(month)
                         ..fetchNewEvent(),
@@ -151,6 +171,7 @@ class _CalendarSheetState extends State<CalendarSheet> {
                           builder: (context) => widget.isTask
                               ? TimePickerForTaskSheet(
                                   duration: duration,
+                                  isNew: widget.isNew,
                                 )
                               : TimePickerForEventSheet(
                                   durationStart: Duration(
@@ -167,13 +188,13 @@ class _CalendarSheetState extends State<CalendarSheet> {
                       icon: const Icon(Icons.timer),
                       text: widget.isTask
                           ? ((time[0] == 0 && time[1] == 0)
-                              ? 'Добваить время'
+                              ? t.AddTime
                               : '${NumberFormat("00").format(time[0])}:${NumberFormat("00").format(time[1])}')
                           : ((time[0] == 0 &&
                                   time[1] == 0 &&
                                   time[2] == 0 &&
                                   time[3] == 0)
-                              ? 'Добваить время'
+                              ? t.AddTime
                               : '${NumberFormat("00").format(time[0])}:${NumberFormat("00").format(time[1])} - ${NumberFormat("00").format(time[2])}:${NumberFormat("00").format(time[3])}'),
                     ),
                     CalendarSheetAction(
@@ -182,12 +203,14 @@ class _CalendarSheetState extends State<CalendarSheet> {
                           context: context,
                           builder: (context) => widget.isTask
                               ? NotificationDialog(
-                                  selected:
-                                      notificationDuration, // добавить форму для уведомлений ивентов!!!
+                                  selected: notificationDuration,
+                                  isNew: widget.isNew,
+                                  ///add
                                 )
                               : NotificationDialogEvent(
                                   selectedDurations: notificationDuration,
-                                  startTime: DateTime(date.year, date.month, date.day, time[0], time[1]),
+                                  startTime: DateTime(date.year, date.month,
+                                      date.day, time[0], time[1]),
                                 ),
                         );
                         setState(() {
@@ -199,22 +222,18 @@ class _CalendarSheetState extends State<CalendarSheet> {
                         'assets/icons/notification4.png',
                         height: 25,
                       ),
-                      // SvgPicture.asset(
-                      //   'assets/icons/notification.svg',
-                      //   height: 25,
-                      // ),
                       text: notificationText!,
                     ),
                     CalendarSheetAction(
                       onPressed: () async {
                         final result = await showDialog<List<Object?>>(
                             context: context,
-                            builder: (context) => RepeatDialog());
+                            builder: (context) => RepeatDialog(isNew: widget.isNew,isTask: widget.isTask,));
 
                         if (result != null) {
                           switch (result[0]) {
                             case MeasuringPeriod.day:
-                              repetitionText = 'Ежедневно';
+                              repetitionText = t.Everyday;
                               break;
                             case MeasuringPeriod.week:
                               String days = '';
@@ -240,9 +259,7 @@ class _CalendarSheetState extends State<CalendarSheet> {
                         'assets/icons/refresh.png',
                         height: 25,
                       ), //SvgPicture.asset('assets/icons/repetition.svg'),
-                      text: repetitionText == null
-                          ? 'Повторять'
-                          : repetitionText!,
+                      text: repetitionText == null ? t.Repeat : repetitionText!,
                     ),
                   ],
                 ),
@@ -255,11 +272,17 @@ class _CalendarSheetState extends State<CalendarSheet> {
                   int hours = time[0]; //timeDuration!.inHours;
                   int minutes = time[1]; //timeDuration!.inMinutes % 60;
                   widget.isTask
-                      ? (context.read<NewTaskCubit>()
-                        ..changeDate(DateTime(selected.year, selected.month,
-                            selected.day, hours, minutes))
-                        ..changeReminder(
-                            notificationDuration?[0] ?? const Duration()))
+                      ? (widget.isNew
+                          ? (context.read<NewTaskCubit>()
+                            ..changeDate(DateTime(selected.year, selected.month,
+                                selected.day, hours, minutes))
+                            ..changeReminder(
+                                notificationDuration?[0] ?? const Duration()))
+                          : (context.read<EditTaskCubit>()
+                            ..changeDate(DateTime(selected.year, selected.month,
+                                selected.day, hours, minutes))
+                            ..changeReminder(
+                                notificationDuration?[0] ?? const Duration())))
                       : (context.read<NewEventCubit>()
                         ..changeDate(selected,
                             startTime: [time[0], time[1]],
@@ -278,7 +301,7 @@ class _CalendarSheetState extends State<CalendarSheet> {
 
   String durationInText(Duration duration) {
     if (duration == const Duration()) {
-      return 'На время начала';
+      return t.AtStartTime;
     } else {
       int days = duration.inDays;
       int hours = duration.inHours % 24;

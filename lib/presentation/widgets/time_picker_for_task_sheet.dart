@@ -6,10 +6,14 @@ import 'package:universal_assistant/main.dart';
 import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/apply_button.dart';
 
+import '../../i18n/strings.g.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
+
 class TimePickerForTaskSheet extends StatefulWidget {
-  TimePickerForTaskSheet({super.key,required this.duration});//
+  TimePickerForTaskSheet({super.key,required this.duration,required this.isNew});//
 
   Duration duration;
+  bool isNew;
 
   @override
   State<TimePickerForTaskSheet> createState() => _TimePickerForTaskSheetState();
@@ -28,9 +32,9 @@ class _TimePickerForTaskSheetState extends State<TimePickerForTaskSheet> {
     hour = widget.duration.inHours;
     minute = widget.duration.inMinutes % 60;
     return AlertDialog(
-      title: const Text(
-        'Выберите время',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+      title: Text(
+        t.SelectTime,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -144,9 +148,11 @@ class _TimePickerForTaskSheetState extends State<TimePickerForTaskSheet> {
             onPressed: () {
               int hours = widget.duration.inHours;
               int minutes = widget.duration.inMinutes % 60;
-              context.read<NewTaskCubit>()
+              widget.isNew ? (context.read<NewTaskCubit>()
                 ..changeTime(hour!, minute!)
-                ..fetchNewTask();
+                ..fetchNewTask()):(context.read<EditTaskCubit>()
+                ..changeTime(hour!, minute!)
+                ..fetchEditTask());
               // Navigator.pop(context, [selectedHour, selectedMinute]);
               Navigator.pop(context, );//duration
             },

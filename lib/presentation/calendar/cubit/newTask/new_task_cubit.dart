@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:universal_assistant/core/enums/measuring_period.dart';
 import 'package:universal_assistant/domain/entities/periodicity.dart';
 import 'package:universal_assistant/domain/entities/reminder.dart';
 import 'package:universal_assistant/domain/entities/tag.dart';
@@ -37,7 +38,7 @@ class NewTaskCubit extends Cubit<NewTaskState> {
         status: NewTaskStatus.initial,
         tasks: tasks,
       ));
-      if(tasks != null && tasks.isNotEmpty){
+      if (tasks != null && tasks.isNotEmpty) {
         emit(state.copyWithTask(id: tasks.last.id + 1));
       }
     } catch (_) {
@@ -50,10 +51,9 @@ class NewTaskCubit extends Cubit<NewTaskState> {
     emit(state.copyWith(status: NewTaskStatus.loading));
 
     try {
-
       emit(state.copyWithTask(
           id: state.tasks.isEmpty ? 0 : state.tasks.last.id + 1));
-      if(state.canSubmit){
+      if (state.canSubmit) {
         List<Task> tasks = [];
         for (int i = 0; i < state.tasks.length; i++) {
           tasks.add(state.tasks[i]);
@@ -61,13 +61,65 @@ class NewTaskCubit extends Cubit<NewTaskState> {
         tasks.add(state.task);
         // tasks.add(state.task);
         //state.tasks.add(state.task);
-        emit(state.copyWith(tasks: tasks));
         print(state.tasks);
         Reminder.notificationService.scheduledNotification(state.task.reminder);
+
         final result = await _taskRepository.addTask(state.task);
+        if (state.task.repetition == true) {
+          Duration period = Duration();
+          switch (state.task.periodicity?.measuringPeriod) {
+            case null:
+            // TODO: Handle this case.
+            case MeasuringPeriod.day:
+              period = Duration(days: state.task.periodicity!.periodLength);
+              break;
+            case MeasuringPeriod.week:
+              period = Duration(days: state.task.periodicity!.periodLength * 7);
+              break;
+            case MeasuringPeriod.month:
+              period =
+                  Duration(days: state.task.periodicity!.periodLength * 30);
+              break;
+          }
+
+          DateTime nextDate = state.task.date.add(period);
+          final dateEnd = state.task.periodicity!.endOfRepetition ??
+              state.task.date.add(const Duration(days: 5 * 365));
+          while (nextDate.isBefore(dateEnd)) {
+            Task newTask = Task(
+                id: state.task.id + 1,
+                name: state.task.name,
+                allDay: state.task.allDay,
+                repetition: false,
+                date: state.task.date,
+                priority: state.task.priority,
+                reminder: Reminder(
+                    id: state.task.reminder.id + 1,
+                    message: state.task.reminder.message,
+                    title: state.task.reminder.title,
+                    dateOfNotification:
+                        state.task.reminder.dateOfNotification.add(period)),
+                info: state.task.info,
+                isPomodoro: state.task.isPomodoro,
+                isCompleted: state.task.isCompleted);
+            state.tasks.add(newTask);
+            Reminder.notificationService.scheduledNotification(newTask.reminder);
+
+            try {
+              await _taskRepository.addTask(newTask);
+            } on Exception catch (e) {
+              print('error in repetition task');
+            }
+          }
+        }
+
+        emit(state.copyWith(tasks: tasks));
         return [result];
-      }else{
-        return [false,'Невозможно сохранить задачу!\nПроверьте заполненные данные.'];
+      } else {
+        return [
+          false,
+          'Невозможно сохранить задачу!\nПроверьте заполненные данные.'
+        ];
       }
     } catch (error) {
       emit(state.copyWith(status: NewTaskStatus.failure));
@@ -103,7 +155,7 @@ class NewTaskCubit extends Cubit<NewTaskState> {
 
   void changeEndOfRepetition(DateTime newDate) {
     //emit(state.copyWithTask(repetition: true));
-    emit(state.copyWith(endOfRepetition: newDate));//endOfRepetition: newDate
+    emit(state.copyWith(endOfRepetition: newDate)); //endOfRepetition: newDate
     print('${state.date} - ${state.endOfRepetition}');
   }
 
@@ -117,7 +169,7 @@ class NewTaskCubit extends Cubit<NewTaskState> {
         message: reminder.message,
         title: reminder.title,
         dateOfNotification: newDate);
-    emit(state.copyWithTask(date: newDate));//, reminder: newReminder ????
+    emit(state.copyWithTask(date: newDate)); //, reminder: newReminder ????
   }
 
   void changeName(String newName) {
@@ -128,8 +180,8 @@ class NewTaskCubit extends Cubit<NewTaskState> {
     emit(state.copyWithTask(priority: newPriority));
   }
 
-  void changeTag(Tag newTag) {
-    emit(state.copyWithTask(tag: newTag));
+  void changeTag(List<Tag> newTags) {
+    emit(state.copyWithTask(tags: newTags));
   }
 
   void changePeriodicity(Periodicity newPeriodicity) {
@@ -153,7 +205,7 @@ class NewTaskCubit extends Cubit<NewTaskState> {
         ? state.task.name
         : '${DateFormat('dd.MM.yyyy HH:mm').format(state.task.date)} запланирована задача: ${state.task.name}';
     Reminder newReminder = Reminder(
-        id: state.task.id,//если только одно уведомление
+        id: state.task.id, //если только одно уведомление
         message: message,
         title: 'Напоминанием',
         dateOfNotification: reminderDate);

@@ -15,6 +15,8 @@ import 'data/notification_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 
+import 'i18n/strings.g.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,7 +34,9 @@ void main() async {
   await NotificationService().initialize();
   await initializeDateFormatting('ru_RU', null);
 
-  init();
+  await init();
+  final code = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+  await LocaleSettings.setLocale(code == 'ru' ? AppLocale.ru : code == 'be' ? AppLocale.be : AppLocale.en);
 
   runApp(const MyApp());
 }
@@ -55,7 +59,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
-        locale: const Locale('ru', 'RU'),
+        //locale: const Locale('ru', 'RU'),
         supportedLocales: const [
           Locale('ru', 'RU'),
           Locale('en', 'US'),

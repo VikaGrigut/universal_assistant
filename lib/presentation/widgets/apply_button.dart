@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../i18n/strings.g.dart';
+
 class ApplyButton extends StatelessWidget {
   ApplyButton({super.key, required this.onPressed});
 
@@ -18,9 +20,9 @@ class ApplyButton extends StatelessWidget {
                   ),
                   fixedSize: Size(buttonSize, 10),
                 ),
-                child: const Text(
-                  'Применить',
-                  style: TextStyle(
+                child: Text(
+                  t.Apply,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w400,

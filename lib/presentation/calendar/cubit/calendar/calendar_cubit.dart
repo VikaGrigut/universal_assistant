@@ -144,7 +144,7 @@ class CalendarCubit extends Cubit<CalendarState> {
         newList.add(event);
       }
     }
-    _eventRepository.changeEvent(changedEvent);
+    _eventRepository.updateEvent(changedEvent);
     emit(state.copyWith(events: newList));
   }
 

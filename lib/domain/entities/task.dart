@@ -15,7 +15,7 @@ class Task extends Equatable{
     this.periodicity,
     required this.date,
     required this.priority,
-    this.tag,
+    this.tags,
     required this.reminder,
     required this.info,
     required this.isPomodoro,
@@ -29,7 +29,7 @@ class Task extends Equatable{
   final Periodicity? periodicity;
   final DateTime date;
   final Priority priority;
-  final Tag? tag;
+  final List<Tag>? tags;
   final Reminder reminder;
   final String info;
   final bool isPomodoro;
@@ -44,7 +44,7 @@ class Task extends Equatable{
       periodicity,
       date,
       priority,
-      tag,
+      tags,
       reminder,
       info,
       isPomodoro,

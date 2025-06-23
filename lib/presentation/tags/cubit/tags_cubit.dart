@@ -72,12 +72,36 @@ class TagsCubit extends Cubit<TagsState> {
     emit(state.copyWith(spheres: tags));
     //await fetchSpheres();
   }
+
+  bool tasksContainTag(Tag tag){
+    List<Task> sorted = _sortTasks(tasks!, tag);
+    return sorted.isEmpty ? false : true;
+  }
+
+  bool eventsContainTag(Tag tag){
+    List<Event> sorted = _sortEvents(events!, tag);
+    return sorted.isEmpty ? false : true;
+  }
   
-  void deleteTag(int tagId)async{
-    final result = _tagsRepository.deleteTag(tagId);
+  void deleteTag(Tag tagForDelete)async{
+    final result = _tagsRepository.deleteTag(tagForDelete.id);
     print(result);
-    tags!.removeWhere((Tag tag) => tag.id == tagId);
+    tags!.remove(tagForDelete);
     emit(state.copyWith(spheres: tags));
+    List<Task> sortedTasks = _sortTasks(tasks!, tagForDelete);
+    List<Event> sortedEvents = _sortEvents(events!, tagForDelete);
+    if(sortedTasks.isNotEmpty){
+      for(Task task in sortedTasks){
+        task.tags?.remove(tagForDelete);
+        print(_taskRepository.updateTask(task));
+      }
+    }
+    if(sortedEvents.isNotEmpty){
+      for(Event event in sortedEvents){
+        event.tags?.remove(tagForDelete);
+        print(_eventRepository.updateEvent(event));
+      }
+    }
     //await fetchSpheres();
   }
 
@@ -88,11 +112,11 @@ class TagsCubit extends Cubit<TagsState> {
     emit(state.copyWith(spheres: tags));
   }
 
-  List<Event> _sortEvents(List<Event> events, Tag sphere) {
-    return events.where((event) => event.tag == sphere).toList();
+  List<Event> _sortEvents(List<Event> events, Tag tag) {
+    return events.where((event) => event.tags == null ? false : event.tags!.contains(tag)).toList();
   }
 
-  List<Task> _sortTasks(List<Task> tasks, Tag sphere) {
-    return tasks.where((task) => task.tag == sphere).toList();
+  List<Task> _sortTasks(List<Task> tasks, Tag tag) {
+    return tasks.where((task) => task.tags == null ? false : task.tags!.contains(tag)).toList();
   }
 }

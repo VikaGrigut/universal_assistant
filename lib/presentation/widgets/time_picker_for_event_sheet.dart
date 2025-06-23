@@ -7,6 +7,8 @@ import 'package:universal_assistant/presentation/calendar/cubit/newEvent/new_eve
 import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/apply_button.dart';
 
+import '../../i18n/strings.g.dart';
+
 class TimePickerForEventSheet extends StatefulWidget {
   TimePickerForEventSheet(
       {super.key, required this.durationStart, required this.durationEnd});
@@ -37,9 +39,9 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
     // ];
     // endTime = [widget.durationEnd.inHours, widget.durationEnd.inMinutes % 60];
     return AlertDialog(
-      title: const Text(
-        'Выберите время',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+      title: Text(
+        t.SelectTime,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -70,7 +72,7 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
                           width: MediaQuery.of(context).size.width * 0.3,
                           child: Text(
                             (startTime[0] == -1 && startTime[1] == -1)
-                                ? 'От'
+                                ? t.From
                                 : '${NumberFormat("00").format(startTime[0])}:${startTime[1] == -1 ? NumberFormat("00").format(0) : NumberFormat("00").format(startTime[1])}',
                           ),
                         ),
@@ -86,7 +88,7 @@ class _TimePickerForEventSheetState extends State<TimePickerForEventSheet> {
                           width: MediaQuery.of(context).size.width * 0.3,
                           child: Text(
                             (endTime[0] == -1 && endTime[1] == -1)
-                                ? 'До'
+                                ? t.To
                                 : '${NumberFormat("00").format(endTime[0])}:${endTime[1] == -1 ? NumberFormat("00").format(0) : NumberFormat("00").format(endTime[1])}',
                           ),
                         ),

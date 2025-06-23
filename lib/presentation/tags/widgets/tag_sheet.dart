@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_assistant/domain/entities/tag.dart';
 import 'package:universal_assistant/presentation/tags/cubit/tags_cubit.dart';
 
+import '../../../i18n/strings.g.dart';
+
 class TagSheet extends StatelessWidget {
   TagSheet({super.key,required this.nameController});
 
@@ -25,9 +27,9 @@ class TagSheet extends StatelessWidget {
           TextField(
             controller: nameController,
             cursorColor: Colors.black,
-            decoration: const InputDecoration(
-              hintText: 'Название',
-              hintStyle: TextStyle(
+            decoration: InputDecoration(
+              hintText: t.Name,
+              hintStyle: const TextStyle(
                 color: Colors.grey,
               ),
               focusColor: Colors.grey,

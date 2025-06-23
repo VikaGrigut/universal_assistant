@@ -20,6 +20,7 @@ import 'package:universal_assistant/presentation/widgets/tasks_list.dart';
 
 import '../cubit/newTask/new_task_cubit.dart';
 import '../widgets/expandable_panel.dart';
+import 'package:universal_assistant/i18n/strings.g.dart';
 
 // class CalendarPage extends StatefulWidget {
 //   const CalendarPage({super.key});
@@ -28,20 +29,31 @@ import '../widgets/expandable_panel.dart';
 //   State<CalendarPage> createState() => _CalendarPageState();
 // }
 
-class CalendarPage extends StatelessWidget {
-  static Route<void> route() {
-    return MaterialPageRoute(
-      builder: (_) => BlocProvider<CalendarCubit>(
-        create: (_) => CalendarCubit(
-            homeCubit: locator(),
-            eventRepository: locator(),
-            taskRepository: locator())
-          ..fetchCalendar(),
-        child: CalendarPage(),
-      ),
-    );
-  }
+class CalendarPage extends StatefulWidget {
+  // static Route<void> route() {
+  //   return MaterialPageRoute(
+  //     builder: (_) => BlocProvider<CalendarCubit>(
+  //       create: (_) => CalendarCubit(
+  //           homeCubit: locator(),
+  //           eventRepository: locator(),
+  //           taskRepository: locator())
+  //         ..fetchCalendar(),
+  //       child: CalendarPage(),
+  //     ),
+  //   );
+  // }
 
+  @override
+  State<CalendarPage> createState() => _CalendarPageState();
+}
+
+class _CalendarPageState extends State<CalendarPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    locator.get<CalendarCubit>().fetchCalendar();
+  }
   @override
   Widget build(BuildContext context) {
     final month = context.select((CalendarCubit cubit) => cubit.state.month);
@@ -69,17 +81,18 @@ class CalendarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<CalendarCubit>().fetchCalendar();
+    //context.read<CalendarCubit>().fetchCalendar();
     final events = context.select((CalendarCubit cubit) => cubit.state.events);
     final tasks = context.select((CalendarCubit cubit) => cubit.state.tasks);
+    final locale = context.read<HomeCubit>().getLanguageString();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           bottomOpacity: 0.2,
           centerTitle: true,
-          title: const Text(
-            'Календарь',
+          title: Text(
+            t.Calendar,
           ),
         ),
         backgroundColor: Colors.grey[300],
@@ -90,7 +103,8 @@ class CalendarView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    DateFormat('yMMMM').format(month).toString(),
+                    _formatMonth(month,locale),
+                    //DateFormat('yMMMM', locale).format(month).toString(),///localization?
                     style: const TextStyle(fontSize: 19),
                   ),
                 ],
@@ -212,67 +226,15 @@ class CalendarView extends StatelessWidget {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return SafeArea(
-  //       child: Scaffold(
-  //           appBar: AppBar(
-  //             backgroundColor: Colors.white,
-  //             centerTitle: true,
-  //             title: const Text(
-  //               'Календарь',
-  //             ),
-  //           ),
-  //           body: Stack(
-  //             children: [
-  //               ExpandablePanel.expandCollapse(
-  //                 header: Row(
-  //                   children: [
-  //                     Text(
-  //                       DateFormat('yMMMM').format(month).toString(),
-  //                       style: const TextStyle(fontSize: 19),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 expanded: CalendarBasis(
-  //                   expanded: Column(
-  //                     children: [
-  //                       CalendarGrid(color: Colors.white),
-  //                       const SizedBox(
-  //                         height: 10,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   month: month,
-  //                   onSwipe: (month) => context.read<CalendarCubit>()
-  //                     ..changeMonth(month)
-  //                     ..fetchWeekends(),
-  //                 ),
-  //                 collapsed: CalendarBasis(
-  //                   collapsed: const Column(
-  //                     children: [
-  //                       WeekGrid(),
-  //                       SizedBox(
-  //                         height: 10,
-  //                       )
-  //                     ],
-  //                   ),
-  //                   month: month,
-  //                 ),
-  //               ),
-  //               DraggableScrollableSheet(
-  //                   builder: (context, controller) => CustomScrollView(
-  //                         slivers: [
-  //                           SliverList(
-  //                               delegate: SliverChildBuilderDelegate(
-  //                                   (context, index) => Container(
-  //                                         color: Colors.blue,
-  //                                         height: 70,
-  //                                       ),
-  //                                   childCount: 20)),
-  //                         ],
-  //                       ))
-  //             ],
-  //           )));
-  // }
+  String _formatMonth(DateTime date, String code){
+    final DateFormat yearFormat = DateFormat('y', code);
+    final DateFormat monthFormat = DateFormat('MMMM', code);
+
+    String month = monthFormat.format(date);
+    String year = yearFormat.format(date);
+
+    String capitalizedMonth =
+        month[0].toUpperCase() + month.substring(1).toLowerCase();
+    return '$capitalizedMonth $year';
+  }
 }

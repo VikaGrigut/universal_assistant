@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:universal_assistant/domain/entities/do_not_disturb_settings.dart';
+import 'package:universal_assistant/domain/entities/pomodoro_settings.dart';
 import 'package:universal_assistant/presentation/pomodoro/cubit/pomodoro_state.dart';
 
 import '../../../domain/entities/task.dart';
 import '../../../domain/repositories/task_repository.dart';
 import '../../../domain/repositories/settings_repository.dart';
 
-class PomodoroCubit extends Cubit<PomodoroState>{
-
+class PomodoroCubit extends Cubit<PomodoroState> {
   final TaskRepository _taskRepository;
   final SettingsRepository _settingsRepository;
   Timer? _timer;
@@ -20,7 +21,7 @@ class PomodoroCubit extends Cubit<PomodoroState>{
         _settingsRepository = settingRepository,
         super(PomodoroState());
 
-  Future<void> fetchPomodoro()async{
+  Future<void> fetchPomodoro() async {
     emit(state.copyWith(status: PomodoroStatus.loading));
 
     try {
@@ -36,6 +37,23 @@ class PomodoroCubit extends Cubit<PomodoroState>{
       emit(state.copyWith(status: PomodoroStatus.failure));
     }
     emit(state.copyWith(status: PomodoroStatus.success));
+  }
+
+  Future<void> changeSettings(PomodoroSettings pomoSettings) async {
+    final result = await _settingsRepository.savePomodoroSettings(pomoSettings);
+    emit(state.copyWith(pomodoroSettings: pomoSettings));
+  }
+
+  Future<void> changeDoNotDisturbSettings(DoNotDisturbSettings settings) async {
+    //final result = await _settingsRepository.savePomodoroSettings(settings);
+    PomodoroSettings newPomoSettings = PomodoroSettings(
+      numOfPomo: state.pomodoroSettings.numOfPomo,
+      durationPomo: state.pomodoroSettings.durationPomo,
+      shortBreak: state.pomodoroSettings.shortBreak,
+      longBreak: state.pomodoroSettings.longBreak,
+      doNotDisturbSettings: settings,
+    );
+    emit(state.copyWith(pomodoroSettings: newPomoSettings));
   }
 
   void start() {
@@ -55,7 +73,7 @@ class PomodoroCubit extends Cubit<PomodoroState>{
     });
   }
 
-   void _onSessionComplete() {
+  void _onSessionComplete() {
     PomodoroMode nextMode;
     int nextDuration;
     int completed = state.completedCycles;
@@ -86,7 +104,7 @@ class PomodoroCubit extends Cubit<PomodoroState>{
     ));
   }
 
-  void changeCurrentTask(Task task){
+  void changeCurrentTask(Task task) {
     emit(state.copyWith(currentTask: task));
   }
 
@@ -106,15 +124,13 @@ class PomodoroCubit extends Cubit<PomodoroState>{
     return super.close();
   }
 
-  void completeTask(){
+  void completeTask() {
     emit(state.copyWithTask(isCompleted: true));
   }
 
   List<Task> _sortTasks(List<Task> tasks) {
     return tasks
-        .where((task) =>
-            task.isPomodoro == true && task.isCompleted == false)
+        .where((task) => task.isPomodoro == true && task.isCompleted == false)
         .toList();
   }
-
 }

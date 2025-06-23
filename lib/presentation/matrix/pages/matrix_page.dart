@@ -7,6 +7,7 @@ import 'package:universal_assistant/presentation/matrix/pages/priority_tasks_pag
 
 import '../../../core/enums/priority.dart';
 import '../../../domain/entities/task.dart';
+import '../../../i18n/strings.g.dart';
 import '../../calendar/cubit/calendar/calendar_cubit.dart';
 
 class MatrixPage extends StatefulWidget {
@@ -18,10 +19,10 @@ class MatrixPage extends StatefulWidget {
 
 class _MatrixPageState extends State<MatrixPage> {
   List<String> matrixTitles = [
-    'Важно \nи срочно',
-    'Важно, \nно не срочно',
-    'Не важно, \nно срочно',
-    'Не важно \nи не срочно'
+    t.ForMatrix.ImportantAndUrgent,
+    t.ForMatrix.ImportantAndNotUrgent,
+    t.ForMatrix.NotImportantAndUrgent,
+    t.ForMatrix.NotImportantAndNotUrgent
   ];
   List<MaterialColor> colors = [
     Colors.purple,
@@ -31,8 +32,13 @@ class _MatrixPageState extends State<MatrixPage> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     context.read<MatrixCubit>().fetchMatrix();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final tasks = context.select((MatrixCubit cubit) => cubit.state.tasks);
     bool? checked = false;
     return SafeArea(
@@ -41,8 +47,8 @@ class _MatrixPageState extends State<MatrixPage> {
           backgroundColor: Colors.white,
           bottomOpacity: 0.2,
           centerTitle: true,
-          title: const Text(
-            'Календарь',
+          title: Text(
+            t.Matrix,
           ),
         ),
         backgroundColor: Colors.grey[200],
@@ -89,6 +95,7 @@ class _MatrixPageState extends State<MatrixPage> {
                             Text(
                               matrixTitles[index],
                               style: TextStyle(color: colors[index]),
+                              maxLines: 2,
                             ),
                             Image.asset(
                               'assets/icons/flag2.png',
@@ -103,11 +110,11 @@ class _MatrixPageState extends State<MatrixPage> {
                       ),
                       Expanded(
                         child: sortedTasks.isEmpty
-                            ? const Align(
+                            ? Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(
-                                  'Нет задач',
-                                  style: TextStyle(
+                                  t.NoTasks,
+                                  style: const TextStyle(
                                       color: Colors.grey, fontSize: 15),
                                 ),
                               )

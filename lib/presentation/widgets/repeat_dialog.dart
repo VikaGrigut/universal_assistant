@@ -13,14 +13,20 @@ import 'package:universal_assistant/presentation/widgets/calendar_sheet_action.d
 import 'package:universal_assistant/presentation/widgets/dialog_basis.dart';
 import 'package:universal_assistant/presentation/widgets/duration_repetition_sheet.dart';
 
+import '../../i18n/strings.g.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
+
 class RepeatDialog extends StatefulWidget {
-  RepeatDialog({super.key, MeasuringPeriod? selected, bool? isTask})
+  RepeatDialog(
+      {super.key, MeasuringPeriod? selected, bool? isTask, bool? isNew})
       : selected = selected ?? MeasuringPeriod.day,
-        isTask = isTask ?? false;
+        isTask = isTask ?? false,
+        isNew = isNew ?? false;
 
   MeasuringPeriod selected;
   List<String> selectedWeekdays = [];
   final bool isTask;
+  final bool isNew;
 
   @override
   State<RepeatDialog> createState() => _RepeatDialogState();
@@ -35,11 +41,17 @@ class _RepeatDialogState extends State<RepeatDialog> {
   Widget build(BuildContext context) {
     final weekdaysCount = utils.DateUtils.weekdays.length;
     final activityDate = widget.isTask
-        ? context.select((NewTaskCubit cubit) => cubit.state.date)
+        ? (widget.isNew
+            ? context.select((NewTaskCubit cubit) => cubit.state.date)
+            : context.select((EditTaskCubit cubit) => cubit.state.date))
         : context.select((NewEventCubit cubit) => cubit.state.date);
     final itemWidth = (MediaQuery.of(context).size.width - 25) / weekdaysCount;
     DateTime endOfRepetition = widget.isTask
-        ? context.select((NewTaskCubit cubit) => cubit.state.endOfRepetition)
+        ? (widget.isNew
+            ? context
+                .select((NewTaskCubit cubit) => cubit.state.endOfRepetition)
+            : context
+                .select((EditTaskCubit cubit) => cubit.state.endOfRepetition))
         : context.select((NewEventCubit cubit) => cubit.state.endOfRepetition);
     endOfRepeat = endOfRepetition;
     print('$endOfRepetition} - end');
@@ -52,13 +64,14 @@ class _RepeatDialogState extends State<RepeatDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Повторять',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  t.Repeat,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -69,13 +82,13 @@ class _RepeatDialogState extends State<RepeatDialog> {
                   String text;
                   switch (period) {
                     case MeasuringPeriod.day:
-                      text = 'День';
+                      text = t.Day;
                       break;
                     case MeasuringPeriod.week:
-                      text = 'Неделя';
+                      text = t.Week;
                       break;
                     case MeasuringPeriod.month:
-                      text = 'Месяц';
+                      text = t.Month;
                       break;
                   }
                   return Padding(
@@ -122,14 +135,19 @@ class _RepeatDialogState extends State<RepeatDialog> {
                       ),
                       backgroundColor: Colors.white,
                       context: context,
-                      builder: (context) => DurationRepetitionSheet(isTask: widget.isTask,),
+                      builder: (context) => DurationRepetitionSheet(
+                        isTask: widget.isTask,
+                        isNew: widget.isNew,
+                      ),
+
+                      ///add
                     );
                     setState(() {
                       endOfRepeat ??= endOfRepetition;
                       durationText = DateFormat.yMMMMd().format(endOfRepeat!);
                     });
                   },
-                  text: durationText == null ? 'Длительность' : durationText!,
+                  text: durationText == null ? t.Duration : durationText!,
                 ),
                 widget.selected != MeasuringPeriod.day
                     ? CalendarSheetAction(
@@ -139,13 +157,15 @@ class _RepeatDialogState extends State<RepeatDialog> {
                             builder: (context) => IntervalRepetition(
                               selectedMeasuring: widget.selected,
                               selectedIndex: selectedInterval ?? 0,
+                              isTask: widget.isTask,
+                              isNew: widget.isNew,
                             ),
                           );
                           setState(() {
                             selectedInterval = result;
                           });
                         },
-                        text: 'Интервал',
+                        text: t.Interval,
                       )
                     : const SizedBox.shrink(),
               ],
@@ -161,7 +181,7 @@ class _RepeatDialogState extends State<RepeatDialog> {
                           vertical: 14, horizontal: 1),
                       itemCount: weekdaysCount,
                       itemBuilder: (context, index) {
-                        String text = utils.DateUtils.weekdays[index];
+                        String text = utils.DateUtils.weekdays[index]();
                         return SizedBox(
                           width: itemWidth - 2,
                           child: GestureDetector(
@@ -169,14 +189,14 @@ class _RepeatDialogState extends State<RepeatDialog> {
                               setState(() {
                                 if (!widget.selectedWeekdays.contains(text)) {
                                   widget.selectedWeekdays
-                                      .add(utils.DateUtils.weekdays[index]);
+                                      .add(utils.DateUtils.weekdays[index]());
                                 } else {
                                   widget.selectedWeekdays.remove(text);
                                 }
                               });
                             },
                             child: Text(
-                              utils.DateUtils.weekdays[index],
+                              utils.DateUtils.weekdays[index](),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 13,
@@ -202,11 +222,11 @@ class _RepeatDialogState extends State<RepeatDialog> {
                 showDialog(
                   context: context,
                   builder: (context) => DialogBasis(
-                    title: ' Внимание!',
+                    title: t.Attention,
                     content: [
-                      const Text(
-                        'Дата окончания повторения предшествует дате задачи',
-                        style: TextStyle(
+                      Text(
+                        t.RepetitionDatePrecedesTaskDate,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
@@ -222,9 +242,9 @@ class _RepeatDialogState extends State<RepeatDialog> {
                           fixedSize:
                               Size(MediaQuery.of(context).size.width - 30, 10),
                         ),
-                        child: const Text(
-                          'Понятно',
-                          style: TextStyle(
+                        child: Text(
+                          t.Clear,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
@@ -239,11 +259,11 @@ class _RepeatDialogState extends State<RepeatDialog> {
                 showDialog(
                   context: context,
                   builder: (context) => DialogBasis(
-                    title: ' Внимание!',
+                    title: t.Attention,
                     content: [
-                      const Text(
-                        'Выберите дни недели повторения',
-                        style: TextStyle(
+                      Text(
+                        t.SelectDaysOfRepeatWeek,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
@@ -259,9 +279,9 @@ class _RepeatDialogState extends State<RepeatDialog> {
                           fixedSize:
                               Size(MediaQuery.of(context).size.width - 30, 10),
                         ),
-                        child: const Text(
-                          'Понятно',
-                          style: TextStyle(
+                        child: Text(
+                          t.Clear,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
@@ -278,7 +298,11 @@ class _RepeatDialogState extends State<RepeatDialog> {
                   selectedInterval,
                   widget.selectedWeekdays
                 ]);
-                widget.isTask ? context.read<NewTaskCubit>().changeRepetition(true) : context.read<NewEventCubit>().changeRepetition(true);
+                widget.isTask
+                    ? (widget.isNew
+                        ? context.read<NewTaskCubit>().changeRepetition(true)
+                        : context.read<EditTaskCubit>().changeRepetition(true))
+                    : context.read<NewEventCubit>().changeRepetition(true);
               }
             }),
           ],
@@ -292,14 +316,24 @@ class IntervalRepetition extends StatelessWidget {
   IntervalRepetition(
       {super.key,
       required this.selectedMeasuring,
-      required this.selectedIndex});
+      required this.selectedIndex,
+      bool? isTask,
+      bool? isNew})
+      : isTask = isTask ?? false,
+        isNew = isNew ?? false;
 
   MeasuringPeriod selectedMeasuring;
   int selectedIndex;
+  bool isTask;
+  bool isNew;
 
   @override
   Widget build(BuildContext context) {
-    final date = context.select((NewTaskCubit cubit) => cubit.state.date);
+    final date = isTask
+        ? (isNew
+            ? context.select((NewTaskCubit cubit) => cubit.state.date)
+            : context.select((EditTaskCubit cubit) => cubit.state.date))
+        : context.select((NewEventCubit cubit) => cubit.state.date);
     return Dialog(
       backgroundColor: Colors.white,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -309,13 +343,14 @@ class IntervalRepetition extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Выберите интервал',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  t.SelectInterval,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -337,7 +372,9 @@ class IntervalRepetition extends StatelessWidget {
                       : List.generate(
                           2,
                           (index) => index == 0
-                              ? Text('Ежемесячно(${date.day} числа)')
+                              ? Text(t.EveryMonth)
+
+                              ///(date: date.day)
                               : Text(
                                   'Ежемесячно в ${getWeekdayOccurrenceInMonth(date)} ${date.weekday}')),
                 ),

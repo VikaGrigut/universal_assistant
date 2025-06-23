@@ -11,19 +11,20 @@ import 'package:universal_assistant/presentation/tags/widgets/tag_button.dart';
 import 'package:universal_assistant/presentation/tags/widgets/tag_sheet.dart';
 import 'package:universal_assistant/presentation/widgets/tab_tasks_events.dart';
 
-class TagsPage extends StatelessWidget {
-  static Route<void> route() {
-    return MaterialPageRoute(
-      builder: (_) => BlocProvider<TagsCubit>(
-        create: (_) => TagsCubit(
-          tagsRepository: locator(),
-          eventRepository: locator(),
-          taskRepository: locator(),
-          homeCubit: locator(),
-        )..fetchTags(),
-        child: TagsPage(),
-      ),
-    );
+import '../../../i18n/strings.g.dart';
+
+class TagsPage extends StatefulWidget {
+
+  @override
+  State<TagsPage> createState() => _TagsPageState();
+}
+
+class _TagsPageState extends State<TagsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<TagsCubit>().fetchTags();
   }
 
   @override
@@ -48,7 +49,6 @@ class SpheresView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<TagsCubit>().fetchTags();
     final spheres = context.select((TagsCubit cubit) => cubit.state.tags);
     print(spheres);
     final selectedIndex =
@@ -71,8 +71,8 @@ class SpheresView extends StatelessWidget {
             ),
           ],
           centerTitle: true,
-          title: const Text(
-            'Сферы',
+          title: Text(
+            t.Tags,
           ),
         ),
         backgroundColor: Colors.grey[200],
@@ -93,7 +93,7 @@ class SpheresView extends StatelessWidget {
                               : Colors.grey[400],
                         ),
                         child: Text(
-                          'Все',
+                          t.All,
                           style: TextStyle(
                             color: selectedIndex == -1
                                 ? Colors.white

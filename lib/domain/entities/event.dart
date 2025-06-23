@@ -12,7 +12,7 @@ class Event extends Equatable{
     this.periodicity,
     required this.dateStart,
     required this.dateEnd,
-    this.tag,
+    this.tags,
     required this.reminders,
     required this.info
 });
@@ -24,7 +24,7 @@ class Event extends Equatable{
   final Periodicity? periodicity;
   final DateTime dateStart;
   final DateTime dateEnd;
-  final Tag? tag;
+  final List<Tag>? tags;
   final List<Reminder> reminders;
   final String info;
 
@@ -37,7 +37,7 @@ class Event extends Equatable{
       periodicity,
       dateStart,
       dateEnd,
-      tag,
+      tags,
       reminders,
       info
   ];

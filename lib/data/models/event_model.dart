@@ -15,7 +15,7 @@ class EventModel extends Equatable{
     required this.periodicity,
     required this.dateStart,
     required this.dateEnd,
-    required this.tag,
+    required this.tags,
     required this.reminders,
     required this.info
 });
@@ -27,11 +27,11 @@ class EventModel extends Equatable{
   final PeriodicityModel? periodicity;
   final DateTime dateStart;
   final DateTime dateEnd;
-  final TagModel? tag;
+  final List<TagModel>? tags;
   final List<ReminderModel> reminders;
   final String info;
 
-  EventModel.fromJson(Map<String, Object?> json)
+  EventModel.fromJson(Map<String, Object?> json,List<TagModel> tagsList)
     :id = int.parse(json['id'].toString()),
       name = json['name'].toString(),
       allDay = int.parse(json['allDay'].toString()) == 0 ? false : true,
@@ -39,7 +39,7 @@ class EventModel extends Equatable{
       periodicity = json['periodicity'] != '' ? PeriodicityModel.fromJson(jsonDecode(json['periodicity'].toString())) : null,
       dateStart = DateTime.parse(json['dateStart'].toString()),
       dateEnd = DateTime.parse(json['dateEnd'].toString()),
-      tag = json['tag'] != '' ? TagModel.fromJson(jsonDecode(json['tag'].toString())) : null,
+      tags = json['tags'] != "" ? tagsList.where((tag) => List<int>.from(jsonDecode(json['tags'].toString())).contains(tag.id)).toList() : null,
       reminders = List<ReminderModel>.from(jsonDecode(json['reminders'].toString()).map((item) => ReminderModel.fromJson(jsonDecode(item)))),
       info = json['info'] != '' ? json['info'].toString() : '';
 
@@ -51,7 +51,7 @@ class EventModel extends Equatable{
       periodicity: periodicity?.toEntity(),
       dateStart: dateStart,
       dateEnd: dateEnd,
-      tag: tag?.toEntity(),
+      tags: tags?.map((item) => item.toEntity()).toList(),
       reminders: reminders.map((item) => item.toEntity()).toList(),
       info: info
   );
@@ -64,7 +64,7 @@ class EventModel extends Equatable{
       periodicity: eventEntity.periodicity != null ? PeriodicityModel.fromEntity(eventEntity.periodicity!) : null,
       dateStart: eventEntity.dateStart,
       dateEnd: eventEntity.dateEnd,
-      tag: eventEntity.tag != null ? TagModel.fromEntity(eventEntity.tag!) : null,
+      tags: eventEntity.tags?.map((item) => TagModel.fromEntity(item)).toList(),
       reminders: eventEntity.reminders.map((item) => ReminderModel.fromEntity(item)).toList(),
       info: eventEntity.info
     );
@@ -77,7 +77,7 @@ class EventModel extends Equatable{
         'periodicity': periodicity != null ? jsonEncode(periodicity!.toJson()) : '',
         'dateStart': dateStart.toString(),
         'dateEnd': dateEnd.toString(),
-        'tag': tag  != null ? jsonEncode(tag!.toJson()) : '',
+        'tags': tags  != null ? jsonEncode(List<int>.from(tags!.map((item) => item.id))) : '',
         'reminders': jsonEncode(List<String>.from(reminders.map((item) => jsonEncode(item.toJson())))),
         'info': info ?? ''
     };
@@ -91,7 +91,7 @@ class EventModel extends Equatable{
       periodicity,
       dateStart,
       dateEnd,
-      tag,
+      tags,
       reminders,
       info
   ];

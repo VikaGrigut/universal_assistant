@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:universal_assistant/presentation/pomodoro/pages/pomodoro_settings_page.dart';
 import 'package:universal_assistant/presentation/recurring/pages/recurring_page.dart';
 
+import '../../../i18n/strings.g.dart';
 import '../../calendar/pages/calendar_page.dart';
 import '../../matrix/pages/matrix_page.dart';
 import '../../menu/pages/menu_page.dart';
@@ -58,8 +60,22 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController infoController = TextEditingController();
 
+  //bool _isFirstLaunch = true;
+
+  @override
+  void initState() {
+    super.initState();
+    //print('home');
+    context.read<HomeCubit>().fetchHome();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // if(_isFirstLaunch){
+    //   print('home');
+    //   context.read<HomeCubit>().fetchHome();
+    //   _isFirstLaunch = false;
+    // }
     final selectedTab = context.select((HomeCubit cubit) => cubit.state.tab);
     return SafeArea(
       child: Scaffold(
@@ -103,9 +119,9 @@ class _HomePageState extends State<HomePage> {
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey),
-                          child: const Text(
-                            'task',
-                            style: TextStyle(color: Colors.black),
+                          child: Text(
+                            t.Tasks,
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                         ElevatedButton(
@@ -126,9 +142,9 @@ class _HomePageState extends State<HomePage> {
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey),
-                          child: const Text(
-                            'event',
-                            style: TextStyle(color: Colors.black),
+                          child: Text(
+                            t.Events,
+                            style: const TextStyle(color: Colors.black),
                           ),
                         )
                       ],
@@ -173,7 +189,9 @@ class _HomePageState extends State<HomePage> {
                         //     ? Colors.black
                         //     : Colors.grey.shade600,
                       ),
-                      onPressed: () => context.read<HomeCubit>().setTab(HomeTab.values[index]) ,//_onItemTapped(index),
+                      onPressed: () => setState(() {
+                        context.read<HomeCubit>().setTab(HomeTab.values[index]);
+                      }) ,//_onItemTapped(index),
                     ),
                   );
                 // if (index == 2) {
@@ -226,6 +244,8 @@ class _HomePageState extends State<HomePage> {
         return ChangeTagsPage();
       case HomeTab.recurring:
         return RecurringPage();
+      case HomeTab.pomodoroSettings:
+        return PomodoroSettingsPage();
     }
   }
 

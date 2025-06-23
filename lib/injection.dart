@@ -18,7 +18,7 @@ import 'package:universal_assistant/presentation/tags/cubit/tags_cubit.dart';
 
 final locator = GetIt.instance;
 
-void init() {
+Future<void> init() async {
   locator.registerLazySingleton(() => CalendarCubit(
         homeCubit: locator(),
         eventRepository: locator(),

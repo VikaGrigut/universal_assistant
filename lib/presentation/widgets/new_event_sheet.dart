@@ -10,6 +10,7 @@ import 'package:universal_assistant/presentation/widgets/task_sheet_button.dart'
 import '../../core/enums/priority.dart';
 import '../../domain/entities/tag.dart';
 import '../../domain/utils/date_time_utils.dart';
+import '../../i18n/strings.g.dart';
 import '../widgets/tag_sheet.dart';
 import 'calendar_sheet.dart';
 
@@ -19,7 +20,7 @@ class NewEventSheet extends StatelessWidget {
    DateTime? date;
   List<int>? time;
   //Priority? priority;
-  Tag? tag;
+  List<Tag>? tags;
 
   final TextEditingController nameController;
   final TextEditingController infoController;
@@ -46,9 +47,9 @@ class NewEventSheet extends StatelessWidget {
                 child: TextField(
                   controller: nameController,
                   cursorColor: Colors.black,
-                  decoration: const InputDecoration(
-                    hintText: 'Название',
-                    hintStyle: TextStyle(
+                  decoration: InputDecoration(
+                    hintText: t.Name,
+                    hintStyle: const TextStyle(
                         //color: Colors.grey,
                         ),
                     focusColor: Colors.grey,
@@ -63,9 +64,9 @@ class NewEventSheet extends StatelessWidget {
                 child: TextField(
                   controller: infoController,
                   cursorColor: Colors.black,
-                  decoration: const InputDecoration(
-                    hintText: 'Описание',
-                    hintStyle: TextStyle(
+                  decoration: InputDecoration(
+                    hintText: t.Description,
+                    hintStyle: const TextStyle(
                       fontSize: 10,
                       //color: Colors.grey[400],
                     ),
@@ -104,84 +105,16 @@ class NewEventSheet extends StatelessWidget {
                         print(date);
                       },
                       label: DateTimeUtils.isSameDay(selected, DateTime.now())
-                          ? 'Сегодня'
+                          ? t.Today
                           : DateFormat.yMMMMd().format(selected),
                     ),
-                    // DecoratedBox(
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //       //border: Border.all(color: Colors.black),
-                    //       color: Colors.grey),
-                    //   child: Row(
-                    //     children: [
-                    //       ,
-                    //       // const SizedBox(
-                    //       //   width: 10,
-                    //       // )
-                    //     ],
-                    //   ),
-                    // ),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //         icon: const Icon(
-                    //           Icons.access_time,
-                    //           size: buttonSize,
-                    //         ),
-                    //         onPressed: () async {
-                    //           time = await showModalBottomSheet<List<int>>(
-                    //             shape: const RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.vertical(
-                    //                 top: Radius.circular(12),
-                    //               ),
-                    //             ),
-                    //             backgroundColor: Colors.white,
-                    //             context: context,
-                    //             builder: (BuildContext context) =>
-                    //                 TimePickerSheet(
-                    //               hour: time?[0],
-                    //               minute: time?[1],
-                    //             ),
-                    //           );
-                    //           print(time);
-                    //         })),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //         icon: SvgPicture.asset(
-                    //           'assets/icons/notification.svg',
-                    //           height: buttonSize,
-                    //         ),
-                    //         onPressed: () {
-                    //           // showModalBottomSheet<List<int>>(
-                    //           //   shape: const RoundedRectangleBorder(
-                    //           //     borderRadius: BorderRadius.vertical(
-                    //           //       top: Radius.circular(12),
-                    //           //     ),
-                    //           //   ),
-                    //           //   backgroundColor: Colors.white,
-                    //           //   context: context,
-                    //           //   builder: (BuildContext context) =>
-                    //           //       NotificationSheet(),
-                    //           // );
-                    //         })),
-                    // DecoratedBox(
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(10),
-                    //         border: Border.all(color: Colors.black)),
-                    //     child: IconButton(
-                    //),
                     TaskSheetButton(
                       icon: Image.asset(
                         'assets/icons/hashtag2.png',
                         height: width,
                       ),
                       onPressed: () async{
-                        tag = await showModalBottomSheet<Tag>(
+                        tags = await showModalBottomSheet<List<Tag>>(
                           isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
@@ -190,10 +123,10 @@ class NewEventSheet extends StatelessWidget {
                           ),
                           backgroundColor: Colors.white,
                           context: context,
-                          builder: (BuildContext context) => TagSheet(selectedTag: tag,),
+                          builder: (BuildContext context) => TagSheet(selectedTags: tags,isNew: false,),
                         );
                       },
-                      label: tag == null ? 'Тег' : tag!.name,
+                      label: tags == null ? t.Tag : tags!.map((item) => item.name).toString(),
                     ),
                     // TaskSheetButton(
                     //   icon: Image.asset(
@@ -239,18 +172,45 @@ class NewEventSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                        onPressed: () {
+                        onPressed: () async{
                           context.read<NewEventCubit>()
                             ..changeName(nameController.text)
-                            ..changeInfo(infoController.text);
+                            ..changeInfo(infoController.text)
+                            ..changeRemindersMessage();
                           // if(tag != null){
                           //   context.read<NewEventCubit>().changeTag(tag!);
                           // }
-                          final result = context.read<NewEventCubit>().saveNewEvent();
-                          print(result);
-                          nameController.clear();
-                          infoController.clear();
-                          Navigator.pop(context);
+                          final futureResult = context.read<NewEventCubit>().saveNewEvent();
+                          futureResult.then((result) {
+                            if (!context.mounted) {
+                              return;
+                            } else {
+                              if (result[0] as bool) {
+                                nameController.clear();
+                                infoController.clear();
+                                Navigator.pop(context);
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text(t.Error),
+                                    content: Text(
+                                        t.CanNotSaveTask),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: Text(t.Ok),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
+                          });
+                          // nameController.clear();
+                          // infoController.clear();
+                          // Navigator.pop(context);
                         },
                         icon: Image.asset(
                           'assets/icons/submit.png',

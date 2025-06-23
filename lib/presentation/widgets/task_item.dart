@@ -10,8 +10,13 @@ import 'package:universal_assistant/presentation/calendar/pages/calendar_page.da
 import 'package:universal_assistant/presentation/matrix/cubit/matrix_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/custom_check_box.dart';
 
+import '../../i18n/strings.g.dart';
+import '../tags/cubit/tags_cubit.dart';
+import 'new_task_sheet.dart';
+
 class TaskItem extends StatefulWidget {
-  TaskItem({super.key, required this.task, bool? isMatrix}): isMatrix = isMatrix ?? false;
+  TaskItem({super.key, required this.task, bool? isMatrix})
+      : isMatrix = isMatrix ?? false;
 
   Task task;
   final bool isMatrix;
@@ -72,7 +77,9 @@ class _TaskItemState extends State<TaskItem> {
                   info: widget.task.info,
                   isPomodoro: widget.task.isPomodoro,
                   isCompleted: isCompleted!);
-              widget.isMatrix ? context.read<MatrixCubit>().changeTask(changedTask) : context.read<CalendarCubit>().changeTask(changedTask);
+              widget.isMatrix
+                  ? context.read<MatrixCubit>().changeTask(changedTask)
+                  : context.read<CalendarCubit>().changeTask(changedTask);
             },
           ),
           const SizedBox(
@@ -113,9 +120,8 @@ class _TaskItemState extends State<TaskItem> {
                         Theme(
                           data: Theme.of(context).copyWith(
                             popupMenuTheme: PopupMenuThemeData(
-                              color: Colors.grey[100], // цвет фона меню
-                              textStyle: TextStyle(
-                                  color: Colors.black), // стиль текста
+                              color: Colors.grey[100],
+                              textStyle: const TextStyle(color: Colors.black),
                             ),
                           ),
                           child: PopupMenuButton(
@@ -127,21 +133,37 @@ class _TaskItemState extends State<TaskItem> {
                             itemBuilder: (context) {
                               return [
                                 PopupMenuItem(
-                                  child: const Text('Изменить'),
+                                  child: Text(t.Change),
                                   onTap: () {
                                     print('action_menu_edit');
+                                    final TextEditingController nameController = TextEditingController();
+                                    final TextEditingController infoController = TextEditingController();
+                                    showModalBottomSheet(
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(12),
+                                        ),
+                                      ),
+                                      context: context,
+                                      builder: (context) {
+                                        context.read<TagsCubit>().fetchTags();
+                                        return NewTaskSheet(
+                                          nameController: nameController,
+                                          infoController: infoController,
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
                                 PopupMenuItem(
-                                  child: const Text('Delete'),
+                                  child: Text(t.Delete),
                                   onTap: () {
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
                                         backgroundColor: Colors.white,
-                                        title: Text('Внимание!'),
-                                        content: Text(
-                                            'Вы уверены, что хотите удалить задачу?'),
+                                        title: Text(t.Attention),
+                                        content: Text(t.SureDeleteTask),
                                         actions: [
                                           TextButton(
                                             onPressed: () {
@@ -150,9 +172,9 @@ class _TaskItemState extends State<TaskItem> {
                                                 ..fetchCalendar();
                                               Navigator.pop(context);
                                             },
-                                            child: const Text(
-                                              'Yes',
-                                              style: TextStyle(
+                                            child: Text(
+                                              t.Yes,
+                                              style: const TextStyle(
                                                 color: Colors.black,
                                               ),
                                             ),
@@ -161,9 +183,9 @@ class _TaskItemState extends State<TaskItem> {
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: const Text(
-                                              'No',
-                                              style: TextStyle(
+                                            child: Text(
+                                              t.No,
+                                              style: const TextStyle(
                                                 color: Colors.black,
                                               ),
                                             ),
@@ -191,7 +213,8 @@ class _TaskItemState extends State<TaskItem> {
                       widget.task.info,
                       style: TextStyle(
                           fontSize: 15,
-                          color: Colors.grey[700]),//isCompleted! ? Colors.grey[700] : Colors.grey[800]
+                          color: Colors.grey[
+                              700]), //isCompleted! ? Colors.grey[700] : Colors.grey[800]
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 5),
@@ -220,14 +243,20 @@ class _TaskItemState extends State<TaskItem> {
                               ),
                             ],
                           ),
-                          widget.task.tag != null
-                              ? Text(
-                                  widget.task.tag!.name,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: isCompleted!
-                                          ? Colors.grey[700]
-                                          : Colors.black),
+                          widget.task.tags != null
+                              ? Padding(
+                                  padding: const EdgeInsets.only(right: 3),
+                                  child: Text(
+                                    widget.task.tags!
+                                        .map((item) => item.name)
+                                        .join(', '),
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: isCompleted!
+                                            ? Colors.grey[700]
+                                            : Colors.black),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 )
                               : const SizedBox.shrink(),
                         ],

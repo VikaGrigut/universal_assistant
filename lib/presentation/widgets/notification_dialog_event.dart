@@ -7,6 +7,8 @@ import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task
 import 'package:universal_assistant/presentation/widgets/apply_button.dart';
 import 'package:universal_assistant/presentation/widgets/new_notification_dialog.dart';
 
+import '../../i18n/strings.g.dart';
+
 class NotificationDialogEvent extends StatefulWidget {
   NotificationDialogEvent(
       {super.key, List<Duration>? selectedDurations, required this.startTime})
@@ -28,7 +30,7 @@ class _NotificationDialogEventState extends State<NotificationDialogEvent> {
     const Duration(minutes: 10)
   ];
 
-  List<String> notificationText = ['На время начала'];
+  List<String> notificationText = [t.AtStartTime];
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +47,13 @@ class _NotificationDialogEventState extends State<NotificationDialogEvent> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Напоминания',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  t.Reminder,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -61,7 +63,7 @@ class _NotificationDialogEventState extends State<NotificationDialogEvent> {
                 children: durations.map((duration) {
                   String text;
                   if (duration == const Duration()) {
-                    text = 'На время начала';
+                    text = t.AtStartTime;
                   } else {
                     int days = duration.inDays;
                     int hours = duration.inHours % 24;
@@ -140,9 +142,9 @@ class _NotificationDialogEventState extends State<NotificationDialogEvent> {
                   });
                 }
               },
-              label: const Text(
-                'Добавить',
-                style: TextStyle(color: Colors.black, fontSize: 19),
+              label: Text(
+                t.Add,
+                style: const TextStyle(color: Colors.black, fontSize: 19),
               ),
             ),
             const SizedBox(

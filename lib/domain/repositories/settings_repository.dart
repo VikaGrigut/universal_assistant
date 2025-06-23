@@ -11,7 +11,7 @@ abstract class SettingsRepository{
   //
   // bool saveAppSettings(AppSettings data);
   //
-  // bool savePomodoroSettings(PomodoroSettings data);
+  Future<bool> savePomodoroSettings(PomodoroSettings data);
   //
   // bool addSphere(Tag sphere);
   //

@@ -1,14 +1,16 @@
 import 'package:intl/intl.dart';
 
+import '../../i18n/strings.g.dart';
+
 abstract class DateUtils {
-  static const List<String> weekdays = [
-    'Пн',
-    'Вт',
-    'Ср',
-    'Чт',
-    'Пт',
-    'Сб',
-    'Вс',
+  static List<Function> weekdays = [
+    () => t.Monday,
+    () => t.Tuesday,
+    () => t.Wednesday,
+    () => t.Thursday,
+    () => t.Friday,
+    () => t.Saturday,
+    () => t.Sunday,
   ];
 
   static String formatMonthWithYear(

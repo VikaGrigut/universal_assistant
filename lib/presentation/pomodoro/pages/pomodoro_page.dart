@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_assistant/domain/entities/pomodoro_settings.dart';
 import 'package:universal_assistant/main.dart';
+import 'package:universal_assistant/presentation/home/cubit/home_cubit.dart';
 import 'package:universal_assistant/presentation/pomodoro/cubit/pomodoro_cubit.dart';
 import 'package:universal_assistant/presentation/pomodoro/cubit/pomodoro_state.dart';
 
@@ -105,6 +106,17 @@ class _PomodoroPageState extends State<PomodoroPage> {
                 60);
 
         return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                onPressed: (){
+                  context.read<HomeCubit>().setTab(HomeTab.pomodoroSettings);
+                },
+                icon: Image.asset('assets/icons/parameters.png',height: 25,),
+              ),
+            ],
+          ),
           backgroundColor: Colors.white,
           body: Center(
             child: Column(
@@ -161,9 +173,13 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                   child: Column(
                                     children: [
                                       state.pomodoroTasks.isEmpty
-                                          ? const Center(child: Text('Нет подходящих задач', style: TextStyle(fontSize: 25),))
+                                          ? const Center(
+                                              child: Text(
+                                              'Нет подходящих задач',
+                                              style: TextStyle(fontSize: 25),
+                                            ))
                                           : Expanded(
-                                            child: ListView.builder(
+                                              child: ListView.builder(
                                                 itemCount:
                                                     state.pomodoroTasks.length,
                                                 itemBuilder: (context, index) {
@@ -192,7 +208,7 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                                   );
                                                 },
                                               ),
-                                          ),
+                                            ),
                                     ],
                                   ),
                                 );
@@ -203,9 +219,14 @@ class _PomodoroPageState extends State<PomodoroPage> {
                                   state.pomodoroTasks[selected]);
                             }
                           },
-                          child: Text(state.currentTask == null
-                              ? 'Выбрать задачу'
-                              : state.currentTask!.name, style: const TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.w500),),
+                          child: Text(
+                            state.currentTask == null
+                                ? 'Выбрать задачу'
+                                : state.currentTask!.name,
+                            style: const TextStyle(
+                                color: Colors.deepPurpleAccent,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
                         // Row(
                         //   mainAxisSize: MainAxisSize.min,

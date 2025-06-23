@@ -25,24 +25,6 @@ class NotificationService {
 
     await plugin.initialize(initial,
         onDidReceiveNotificationResponse: (NotificationResponse response) {});
-    //print('✅ Notifications initialized');
-    // final status = await Permission.notification.status;
-    // if (!status.isGranted) {
-    //   final result = await Permission.notification.request();
-    //   print('🔔 Permission result: $result');
-    //}
-    //   await plugin
-    //     .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermission();
-    //
-    // // Для iOS, если хочешь быть уверенным, можно еще добавить:
-    // await plugin
-    //     .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-    //     ?.requestPermissions(
-    //       alert: true,
-    //       badge: true,
-    //       sound: true,
-    //     );
   }
 
   Future<void> showInstanceNotification() async {
@@ -65,15 +47,7 @@ class NotificationService {
         priority: Priority.high);
 
     const NotificationDetails details = NotificationDetails(android: android);
-    // DateTime date = DateTime(
-    //   2025,
-    //   02,
-    //   05,
-    //   16,
-    //   05
-    // );
-    //Map<String,String> meow = {'id':'1','text':'wow'};
-    //final time = DateTime.now().add(const Duration(minutes: 1));
+
     await plugin.zonedSchedule(
         reminder.id,
         reminder.title,
@@ -90,6 +64,44 @@ class NotificationService {
     print(
         'Уведомление установлено:\n${reminder.dateOfNotification.toString()}');
   }
+
+  Future<void> scheduleRecurringNotification({
+  required int id,
+  required String title,
+  required String body,
+  required DateTime scheduledDate,
+  DateTime? endDate,
+  required Duration interval,
+}) async {
+  if (endDate != null && scheduledDate.isAfter(endDate)) return;
+
+  await plugin.zonedSchedule(
+    id,
+    title,
+    body,
+    tz.TZDateTime.from(scheduledDate, tz.local),
+    const NotificationDetails(
+      android: AndroidNotificationDetails('recurring_channel', 'Recurring',
+          importance: Importance.max, priority: Priority.high),
+    ),
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+    matchDateTimeComponents: null, // отключаем регулярные повторы
+  );
+
+
+  Future.delayed(interval, () {
+    scheduleRecurringNotification(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate.add(interval),
+      endDate: endDate,
+      interval: interval,
+    );
+  });
+}
 
   Future<void> deleteNotification(int notificationId) async{
     await plugin.cancel(notificationId);

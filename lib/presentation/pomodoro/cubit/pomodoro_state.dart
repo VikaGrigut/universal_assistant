@@ -20,7 +20,7 @@ class PomodoroState extends Equatable {
       : pomodoroSettings = pomodoroSettings ??
             const PomodoroSettings(
               numOfPomo: 4,
-              durationPomo: 1,
+              durationPomo: 25,
               shortBreak: 5,
               longBreak: 15,
               doNotDisturbSettings: DoNotDisturbSettings(
@@ -29,7 +29,7 @@ class PomodoroState extends Equatable {
                 timeInterval: 0,
               ),
             ),
-          duration = duration ?? (pomodoroSettings != null ? pomodoroSettings.durationPomo*60 : 1*60);
+          duration = duration ?? (pomodoroSettings != null ? pomodoroSettings.durationPomo*60 : 25*60);
 
   final PomodoroStatus status;
   final PomodoroSettings pomodoroSettings;
@@ -72,7 +72,7 @@ class PomodoroState extends Equatable {
         date: currentTask!.date,
         priority: currentTask!.priority,
         reminder: currentTask!.reminder,
-        tag: currentTask!.tag,
+        tags: currentTask!.tags,
         info: currentTask!.info,
         isPomodoro: currentTask!.isPomodoro,
         isCompleted: isCompleted ?? currentTask!.isCompleted,

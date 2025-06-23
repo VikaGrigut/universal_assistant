@@ -8,7 +8,7 @@ abstract class EventRepository{
 
   Future<bool> addEvent(Event event);
 
-  Future<bool> changeEvent(Event event);
+  Future<bool> updateEvent(Event event);
 
   Future<bool> deleteEvent(int eventId);
 

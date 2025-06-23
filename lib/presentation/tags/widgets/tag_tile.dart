@@ -14,7 +14,7 @@ class TagTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final spheres = context.select((TagsCubit cubit) => cubit.state.tags);
+    final spheres = context.select((TagsCubit cubit) => cubit.state.tags);//symmetric(horizontal: 5, vertical: 10),
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
       child: Slidable(
@@ -30,7 +30,7 @@ class TagTile extends StatelessWidget {
           ],
         ),
         child: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width * 0.7,
           decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(7)),
@@ -41,10 +41,15 @@ class TagTile extends StatelessWidget {
                   blurStyle: BlurStyle.outer,
                 ),
               ]),
-          child: Text(
-            sphere.name,
-            style: const TextStyle(
-              fontSize: 20,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric( vertical: 5),//horizontal: 7,
+              child: Text(
+                sphere.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
             ),
           ),
         ),

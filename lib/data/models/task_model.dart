@@ -18,7 +18,7 @@ class TaskModel extends Equatable{
     required this.periodicity,
     required this.date,
     required this.priority,
-    required this.tag,
+    required this.tags,
     required this.reminder,
     required this.info,
     required this.isPomodoro,
@@ -32,13 +32,13 @@ class TaskModel extends Equatable{
   final PeriodicityModel? periodicity;
   final DateTime date;
   final Priority priority;
-  final TagModel? tag;
+  final List<TagModel>? tags;
   final ReminderModel reminder;
   final String info;
   final bool isPomodoro;
   final bool isCompleted;
 
-  TaskModel.fromJson(Map<String, Object?> json)
+  TaskModel.fromJson(Map<String, Object?> json,List<TagModel> tagsList)
       : id = int.parse(json['id'].toString()),
         name = json['name'].toString(),
         allDay = int.parse(json['allDay'].toString()) == 0 ? false : true,
@@ -46,7 +46,7 @@ class TaskModel extends Equatable{
         periodicity = json['periodicity'] != '' ? PeriodicityModel.fromJson(jsonDecode(json['periodicity'].toString())) : null,
         date = DateTime.parse(json['date'].toString()),
         priority = Priority.values[int.parse(json['priority'].toString())],
-        tag = json['tag'] != '' ? TagModel.fromJson(jsonDecode(json['tag'].toString())) : null,
+        tags = json['tags'] != "" ? tagsList.where((tag) => List<int>.from(jsonDecode(json['tags'].toString())).contains(tag.id)).toList() : null,
         reminder = ReminderModel.fromJson(jsonDecode(json['reminder'].toString())),
         info = json['info'] != '' ? json['info'].toString() : '',
         isPomodoro = int.parse(json['isPomodoro'].toString()) == 0 ? false : true,
@@ -60,7 +60,7 @@ class TaskModel extends Equatable{
       periodicity: periodicity?.toEntity(),
       date: date,
       priority: priority,
-      tag: tag?.toEntity(),
+      tags: tags?.map((item) => item.toEntity()).toList(),
       reminder: reminder.toEntity(),
       info: info,
       isPomodoro: isPomodoro,
@@ -74,7 +74,7 @@ class TaskModel extends Equatable{
       periodicity: taskEntity.periodicity != null ? PeriodicityModel.fromEntity(taskEntity.periodicity!) : null,
       date: taskEntity.date,
       priority: taskEntity.priority,
-      tag: taskEntity.tag != null ? TagModel.fromEntity(taskEntity.tag!) : null,
+      tags: taskEntity.tags?.map((item) => TagModel.fromEntity(item)).toList(),
       reminder: ReminderModel.fromEntity(taskEntity.reminder),
       info: taskEntity.info,
       isPomodoro: taskEntity.isPomodoro,
@@ -88,9 +88,9 @@ class TaskModel extends Equatable{
         'periodicity': periodicity != null ? jsonEncode(periodicity!.toJson()) : '',
         'date': date.toString(),
         'priority': priority.index,
-        'tag': tag  != null ? jsonEncode(tag!.toJson()) : '',
+        'tags': tags  != null ? jsonEncode(List<int>.from(tags!.map((item) => item.id))) : '',
         'reminder': jsonEncode(reminder.toJson()),
-        'info': info ?? '',
+        'info': info,
         'isPomodoro': isPomodoro == true ? 1 : 0,
         'isCompleted': isCompleted == true ? 1 : 0
     };
@@ -104,7 +104,7 @@ class TaskModel extends Equatable{
       periodicity,
       date,
       priority,
-      tag,
+      tags,
       reminder,
       info,
       isPomodoro,

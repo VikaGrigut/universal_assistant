@@ -6,11 +6,15 @@ import 'package:universal_assistant/presentation/calendar/cubit/newTask/new_task
 import 'package:universal_assistant/presentation/widgets/apply_button.dart';
 import 'package:universal_assistant/presentation/widgets/new_notification_dialog.dart';
 
+import '../../i18n/strings.g.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
+
 class NotificationDialog extends StatefulWidget {
-  NotificationDialog({super.key, List<Duration>? selected})
+  NotificationDialog({super.key, required this.isNew,List<Duration>? selected})
       : selected = selected?[0] ?? const Duration();
 
   Duration selected;
+  bool isNew;
 
   @override
   State<NotificationDialog> createState() => _NotificationDialogState();
@@ -24,7 +28,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
     const Duration(minutes: 10)
   ];
 
-  String notificationText = 'На время начала';
+  String notificationText = t.AtStartTime;
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +43,13 @@ class _NotificationDialogState extends State<NotificationDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Напоминания',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  t.Reminder,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -55,7 +59,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                 children: durations.map((duration) {
                   String text;
                   if (duration == const Duration()) {
-                    text = 'На время начала';
+                    text = t.AtStartTime;
                   } else {
                     int days = duration.inDays;
                     int hours = duration.inHours % 24;
@@ -123,16 +127,16 @@ class _NotificationDialogState extends State<NotificationDialog> {
                   });
                 }
               },
-              label: const Text(
-                'Добавить',
-                style: TextStyle(color: Colors.black, fontSize: 19),
+              label: Text(
+                t.Add,
+                style: const TextStyle(color: Colors.black, fontSize: 19),
               ),
             ),
             const SizedBox(
               height: 7,
             ),
             ApplyButton(onPressed: () {
-              context.read<NewTaskCubit>().changeReminder(widget.selected);//..fetchNewTask()
+              widget.isNew ? context.read<NewTaskCubit>().changeReminder(widget.selected): context.read<EditTaskCubit>().changeReminder(widget.selected);//..fetchNewTask()
               Navigator.pop(context,[notificationText,[widget.selected]]);
             }),
           ],

@@ -6,14 +6,17 @@ import 'package:universal_assistant/presentation/tags/cubit/tags_cubit.dart';
 import 'package:universal_assistant/presentation/widgets/apply_button.dart';
 import 'package:universal_assistant/presentation/tags/widgets/tag_sheet.dart' as tags_tag_sheet;
 
+import '../../i18n/strings.g.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
 import '../calendar/cubit/newEvent/new_event_cubit.dart';
 import '../calendar/cubit/newTask/new_task_cubit.dart';
 
 class TagSheet extends StatefulWidget {
-  TagSheet({super.key, this.selectedTag, this.isTask = false});
+  TagSheet({super.key, required this.isNew,List<Tag>? selectedTags, this.isTask = false}) : selectedTags = selectedTags ?? [];
 
-  Tag? selectedTag;
+  List<Tag> selectedTags;
   final bool isTask;
+  final bool isNew;
   //String? selectedTag;
 
   @override
@@ -34,13 +37,13 @@ class _TagSheetState extends State<TagSheet> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 15.0, top: 15, bottom: 7),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 15, bottom: 7),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Теги',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                  t.Tags,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
                 ),
               ),
             ),
@@ -53,7 +56,7 @@ class _TagSheetState extends State<TagSheet> {
                       Row(
                         children: [
                           Checkbox(
-                            value: tags2![index] == widget.selectedTag
+                            value: widget.selectedTags.contains(tags2![index])
                                 ? true
                                 : false,
                             checkColor: Colors.black,
@@ -67,7 +70,10 @@ class _TagSheetState extends State<TagSheet> {
                             shape: const CircleBorder(),
                             onChanged: (value) {
                               if (value == true) {
-                                widget.selectedTag = tags2[index];
+                                widget.selectedTags.add(tags2[index]);
+                              }
+                              else{
+                                widget.selectedTags.remove(tags2[index]);
                               }
                               setState(() {});
                             },
@@ -121,10 +127,10 @@ class _TagSheetState extends State<TagSheet> {
               height: 15,
             ),
             ApplyButton(onPressed: () {
-              Navigator.pop(context, widget.selectedTag);
-              if(widget.selectedTag != null){
-                widget.isTask ? context.read<NewTaskCubit>().changeTag(widget.selectedTag!) : context.read<NewEventCubit>().changeTag(widget.selectedTag!);
+              if(widget.selectedTags.isNotEmpty){
+                widget.isTask ? (widget.isNew ? context.read<NewTaskCubit>().changeTag(widget.selectedTags):context.read<EditTaskCubit>().changeTag(widget.selectedTags)) : context.read<NewEventCubit>().changeTag(widget.selectedTags);
               }
+              Navigator.pop(context, widget.selectedTags);
             }),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../i18n/strings.g.dart';
 import 'apply_button.dart';
 
 class NewNotificationDialog extends StatefulWidget {
@@ -35,13 +36,13 @@ class _NewNotificationDialogState extends State<NewNotificationDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Напомнить за',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  t.RememberFor,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 ),
               ),
             ),

@@ -13,6 +13,13 @@ class RecurringPage extends StatefulWidget {
 }
 
 class _RecurringPageState extends State<RecurringPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<RecurringCubit>().fetchRecurring();
+  }
+
   @override
   Widget build(BuildContext context) {
     final tasks =

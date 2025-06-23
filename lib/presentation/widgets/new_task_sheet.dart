@@ -15,15 +15,22 @@ import 'package:universal_assistant/presentation/widgets/task_sheet_button.dart'
 import 'package:universal_assistant/presentation/widgets/time_picker_for_task_sheet.dart';
 
 import '../../domain/entities/tag.dart';
+import '../../i18n/strings.g.dart';
 import '../calendar/cubit/calendar/calendar_cubit.dart';
+import '../calendar/cubit/editTask/edit_task_cubit.dart';
 
 class NewTaskSheet extends StatelessWidget {
   NewTaskSheet(
-      {super.key, required this.nameController, required this.infoController});
+      {super.key,
+      required this.nameController,
+      required this.infoController,
+      bool? newTask})
+      : isNew = newTask ?? false;
   DateTime? date;
   List<int>? time;
   Priority? priority;
-  Tag? tag;
+  List<Tag>? tags;
+  bool isNew;
 
   final TextEditingController nameController;
   final TextEditingController infoController;
@@ -31,12 +38,16 @@ class NewTaskSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<NewTaskCubit>().fetchNewTask();
-    final selected = context.select((NewTaskCubit cubit) => cubit.state.date);
+    final selected = isNew ? context.select((NewTaskCubit cubit) => cubit.state.date) : context.select((EditTaskCubit cubit) => cubit.state.date);
     final currentDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     const iconSize = 17.0;
-    final priorityCubit =
-        context.select((NewTaskCubit cubit) => cubit.state.task.priority);
+    if(!isNew){
+      nameController.text = context.select((EditTaskCubit cubit) => cubit.state.task.name);
+      infoController.text = context.select((EditTaskCubit cubit) => cubit.state.task.info);
+    }
+    // final priorityCubit =
+    //     context.select((NewTaskCubit cubit) => cubit.state.task.priority);
     final width = MediaQuery.of(context).size.width / 23;
     return Padding(
       padding:
@@ -51,9 +62,9 @@ class NewTaskSheet extends StatelessWidget {
                 child: TextField(
                   controller: nameController,
                   cursorColor: Colors.black,
-                  decoration: const InputDecoration(
-                    hintText: 'Название',
-                    hintStyle: TextStyle(
+                  decoration: InputDecoration(
+                    hintText: t.Name,
+                    hintStyle: const TextStyle(
                         //color: Colors.grey,
                         ),
                     focusColor: Colors.grey,
@@ -68,9 +79,9 @@ class NewTaskSheet extends StatelessWidget {
                 child: TextField(
                   controller: infoController,
                   cursorColor: Colors.black,
-                  decoration: const InputDecoration(
-                    hintText: 'Описание',
-                    hintStyle: TextStyle(
+                  decoration: InputDecoration(
+                    hintText: t.Description,
+                    hintStyle: const TextStyle(
                       fontSize: 10,
                       //color: Colors.grey[400],
                     ),
@@ -112,13 +123,14 @@ class NewTaskSheet extends StatelessWidget {
                           builder: (BuildContext context) => CalendarSheet(
                             selectedDate: date ?? selected,
                             isTask: true,
+                            isNew: isNew,
                           ),
                         );
                         date ??= selected;
                         print(date);
                       },
                       label: DateTimeUtils.isSameDay(selected, DateTime.now())
-                          ? 'Сегодня'
+                          ? t.Today
                           : DateFormat.yMMMMd().format(selected),
                     ),
                     // DecoratedBox(
@@ -195,7 +207,7 @@ class NewTaskSheet extends StatelessWidget {
                         height: width,
                       ),
                       onPressed: () async {
-                        tag = await showModalBottomSheet<Tag>(
+                        tags = await showModalBottomSheet<List<Tag>>(
                           isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
@@ -204,11 +216,16 @@ class NewTaskSheet extends StatelessWidget {
                           ),
                           backgroundColor: Colors.white,
                           context: context,
-                          builder: (BuildContext context) => TagSheet(selectedTag: tag,),
+                          builder: (BuildContext context) => TagSheet(
+                            selectedTags: tags,
+                            isTask: true,
+                            isNew: isNew
+                          ),
                         );
-
                       },
-                      label: tag == null ? 'Тег' : tag!.name,
+                      label: tags == null
+                          ? t.Tag
+                          : tags!.map((item) => item.name).toString(),
                     ),
                     TaskSheetButton(
                       icon: Image.asset(
@@ -224,12 +241,12 @@ class NewTaskSheet extends StatelessWidget {
                           ),
                           backgroundColor: Colors.white,
                           context: context,
-                          builder: (BuildContext context) => PrioritySheet(),
+                          builder: (BuildContext context) => PrioritySheet(isNew: isNew,),
                         );
                         //checkBoxStatuses[index!] = true;
                       },
                       label: priority == null
-                          ? 'Приоритет'
+                          ? t.Priority
                           : getPriorityText(priority!),
                     ),
                     // DecoratedBox(
@@ -255,15 +272,18 @@ class NewTaskSheet extends StatelessWidget {
                   children: [
                     IconButton(
                         onPressed: () {
-                          context.read<NewTaskCubit>()
+                          isNew ? (context.read<NewTaskCubit>()
                             ..changeName(nameController.text)
                             ..changeInfo(infoController.text)
-                            ..changeReminderMessage();
+                            ..changeReminderMessage()):(context.read<EditTaskCubit>()
+                            ..changeName(nameController.text)
+                            ..changeInfo(infoController.text)
+                            ..changeReminderMessage());
                           // if(tag != null){
                           //   context.read<NewTaskCubit>().changeTag(tag!);
                           // }
                           final futureResult =
-                              context.read<NewTaskCubit>().saveNewTask();
+                              isNew ? context.read<NewTaskCubit>().saveNewTask():context.read<EditTaskCubit>().saveEditTask();
                           futureResult.then((result) {
                             if (!context.mounted) {
                               return;
@@ -271,19 +291,19 @@ class NewTaskSheet extends StatelessWidget {
                               if (result[0] as bool) {
                                 nameController.clear();
                                 infoController.clear();
+                                context.read<CalendarCubit>().fetchCalendar();
                                 Navigator.pop(context);
                               } else {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AlertDialog(
-                                    title: const Text('Ошибка'),
-                                    content: const Text(
-                                        'Невозможно сохранить задачу!\nПроверьте заполненные данные.'),
+                                    title: Text(t.Error),
+                                    content: Text(t.CanNotSaveTask),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
                                             Navigator.of(context).pop(),
-                                        child: const Text('ОК'),
+                                        child: Text(t.Ok),
                                       ),
                                     ],
                                   ),

@@ -8,18 +8,15 @@ class Settings extends Equatable{
 
   const Settings({
     required this.appSettings,
-    required this.doNotDisturbSettings,
     required this.pomodoroSettings,
   });
 
   final AppSettings appSettings;
-  final DoNotDisturbSettings doNotDisturbSettings;
   final PomodoroSettings pomodoroSettings;
 
   @override
   List<Object?> get props => [
     appSettings,
-    doNotDisturbSettings,
     pomodoroSettings,
   ];
 }

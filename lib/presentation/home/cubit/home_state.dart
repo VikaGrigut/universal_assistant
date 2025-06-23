@@ -1,6 +1,4 @@
-
 part of 'home_cubit.dart';
-
 
 enum HomeTab {
   calendar,
@@ -8,25 +6,32 @@ enum HomeTab {
   matrix,
   menu,
   pomodoro,
+  pomodoroSettings,
   changeTags,
   recurring,
 }
 
 class HomeState extends Equatable {
   const HomeState({
-    required this.tab,
-    // this.tasks = const [],
-    // this.events = const [],
-  });
+    HomeTab? tab,
+    Languages? language,
+  }): tab = tab ?? HomeTab.calendar, language = language ?? Languages.ru;
 
   final HomeTab tab;
-  // final List<Event> events;
-  // final List<Task> tasks;
+  final Languages language;
+
+  HomeState copyWith({
+    HomeTab? tab,
+    Languages? language,
+  }) =>
+      HomeState(
+        tab: tab ?? this.tab,
+        language: language ?? this.language,
+      );
 
   @override
   List<Object> get props => [
-      tab,
-      // tasks,
-      // events,
-  ];
+        tab,
+        language,
+      ];
 }

@@ -138,8 +138,8 @@ class NewEventCubit extends Cubit<NewEventState> {
     emit(state.copyWithEvent(priority: newPriority));
   }
 
-  void changeTag(Tag newSphere) {
-    emit(state.copyWithEvent(tag: newSphere));
+  void changeTag(List<Tag> newTags) {
+    emit(state.copyWithEvent(tags: newTags));
   }
 
   void changePeriodicity(Periodicity newPeriodicity) {
@@ -182,6 +182,22 @@ class NewEventCubit extends Cubit<NewEventState> {
       if(!state.event.reminders.contains(reminder)){
         Reminder.notificationService.scheduledNotification(reminder);
       }
+    }
+    emit(state.copyWithEvent(reminders: newReminders));
+  }
+
+  void changeRemindersMessage(){
+    List<Reminder> newReminders = [];
+    for(final oldReminder in state.event.reminders){
+      String message = state.event.dateStart == oldReminder.dateOfNotification
+          ? state.event.name
+          : '${DateFormat('dd.MM.yyyy HH:mm').format(state.event.dateStart)} запланировано событие: ${state.event.name}';
+      Reminder newReminder = Reminder(
+        id: oldReminder.id,
+        message: message,
+        title: oldReminder.title,
+        dateOfNotification: oldReminder.dateOfNotification);
+      newReminders.add(newReminder);
     }
     emit(state.copyWithEvent(reminders: newReminders));
   }

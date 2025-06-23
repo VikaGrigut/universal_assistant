@@ -15,17 +15,35 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<List<Settings>?> getSettings() async {
-    final db = await dbProvider.settingDB;
+    final db = await dbProvider.db;
     List<Map<String, Object?>> result = await db.query('Settings');
     List<Settings>? settings;
-    if(result.isEmpty){
+    if (result.isEmpty) {
       List<SettingsModel> settingsModel = List<SettingsModel>.from(
-        result.map((element) => SettingsModel.fromJson(element)));
+          result.map((element) => SettingsModel.fromJson(element)));
       settings = settingsModel.map((element) => element.toEntity()).toList();
-      //AppSettingsModel? appSettingsModel = _box.get('app_settings');
-      //return settings;
     }
     return settings;
+  }
+
+  @override
+  Future<bool> savePomodoroSettings(PomodoroSettings data) async {
+    final db = await dbProvider.db;
+    PomodoroSettingsModel dataModel = PomodoroSettingsModel.fromEntity(data);
+    List<Map<String, Object?>> resultSettings = await db.query('Settings');
+    //List<Settings>? settings;
+    if (resultSettings.isEmpty) {
+      List<SettingsModel> settingsModel = List<SettingsModel>.from(
+          resultSettings.map((element) => SettingsModel.fromJson(element)));
+      //settings = settingsModel.map((element) => element.toEntity()).toList();
+      final SettingsModel newSettings = SettingsModel(
+        appSettings: settingsModel[0].appSettings,
+        pomodoroSettings: dataModel,
+      );
+      final result = await db.update('Settings', newSettings.toJson());
+      return result == 0 ? false : true;
+    }
+    return false;
   }
 
   // @override
@@ -46,16 +64,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   //   }
   // }
   //
-  // @override
-  // bool savePomodoroSettings(PomodoroSettings data) {
-  //   PomodoroSettingsModel dataModel = PomodoroSettingsModel.fromEntity(data);
-  //   try {
-  //     _box.put('pomodoro_settings', dataModel);
-  //     return true;
-  //   } catch (error) {
-  //     return false;
-  //   }
-  // }
+
   //
   // @override
   // List<Tag>? getAllSpheres() {

@@ -46,6 +46,7 @@ class CalendarCell extends StatelessWidget {
           children: [
              Container(
                width: 40,
+               clipBehavior: Clip.none,
                child: DecoratedBox(
                 decoration:  BoxDecoration(
                   color: selected ? Colors.deepPurpleAccent : Colors.white,
@@ -53,6 +54,7 @@ class CalendarCell extends StatelessWidget {
                     //borderRadius: BorderRadius.all(Radius.circular(7),)
                     ),
                 child: Padding(
+
                   padding: const EdgeInsets.only(
                     top: 3,
                     right: 9,
@@ -60,6 +62,7 @@ class CalendarCell extends StatelessWidget {
                     left: 9,
                   ),
                   child: Stack(
+                    clipBehavior: Clip.none,
                     children: [
                       Center(
                         child: Text(
@@ -77,8 +80,8 @@ class CalendarCell extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        right: -5,
-                          bottom: 0,
+                        right: -8,
+                          bottom: 3,
                           //height: 20,
                           width: 15,
                           child: DecoratedBox(
@@ -86,7 +89,7 @@ class CalendarCell extends StatelessWidget {
                                 color: CupertinoColors.white,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                      color: CupertinoColors.black),
+                                      color: selected ? Colors.deepPurpleAccent : Colors.white),
                               ),
                           child: numberOfActivities == 0 ? null : Text(numberOfActivities.toString(), style: TextStyle(color: CupertinoColors.black,fontSize: 10),textAlign: TextAlign.center,),))
                     ],
